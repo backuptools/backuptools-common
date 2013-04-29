@@ -42,6 +42,7 @@ public class NodeDatabase {
 	public NodeDatabase(String vault_location) {
 		_vault_location = vault_location;
 	}
+	
 	public void addLineToIndexFiles(String line){
 		FileOutputStream out = null;
 		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+"index.txt");
@@ -82,7 +83,6 @@ public class NodeDatabase {
 	
 		String blobName =sha.SHA1SignFile(file).toString();
 		
-		
 		Path blobfile = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+blobName);
 		if(! Files.exists(blobfile)) {
 			try {
@@ -112,5 +112,8 @@ public class NodeDatabase {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	public String getName() {
+		return	_vault_location;
 	}	
 }
