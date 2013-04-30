@@ -104,4 +104,8 @@ public class BackupAgent {
 		
 		restoreTreeToDirectory(back.getRoot());
 	}
+
+	public void setDatabase(NodeDatabase data) {
+		this._node_database = data;
+	}
 }
