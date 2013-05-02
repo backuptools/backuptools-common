@@ -20,7 +20,10 @@
 package ch.fetm.backuptools.common;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import ch.fetm.backuptools.common.sha.SHA1;
 import ch.fetm.backuptools.common.sha.SHA1Signature;
@@ -28,16 +31,24 @@ import ch.fetm.backuptools.common.sha.SHA1Signature;
 
 public class Tree{
 	
-	private HashMap<Blob, String> _hash_blobs = new HashMap<Blob, String>();
-	private HashMap<Tree, String> _hash_trees = new HashMap<Tree, String>();
+	private HashMap<String, Blob> _hash_blobs = new HashMap<String, Blob>();
+	private HashMap<String, Tree> _hash_trees = new HashMap<String, Tree>();
 	
 	public StringBuffer buildData(){
 		StringBuffer out  = new StringBuffer();
-		for(Blob blob : _hash_blobs.keySet()){
-			out.append("blob"+"\t"+blob.getName()+"\t"+_hash_blobs.get(blob)+"\n");
+		
+		List<String> blobs = new ArrayList<String>(_hash_blobs.keySet());
+		Collections.sort(blobs);
+		
+		List<String> trees = new ArrayList<String>(_hash_trees.keySet());
+		Collections.sort(trees);
+		
+		for(String blobname : blobs){
+			out.append("blob"+"\t"+_hash_blobs.get(blobname).getName()+"\t"+blobname+"\n");
 		}
-		for(Tree tree : _hash_trees.keySet()){
-			out.append("tree"+"\t"+tree.getName()+"\t"+_hash_trees.get(tree)+"\n");
+		
+		for(String treename : trees){
+			out.append("tree"+"\t"+_hash_trees.get(treename).getName()+"\t"+treename+"\n");
 		}
 		return out;
 	}
@@ -49,11 +60,11 @@ public class Tree{
 	}
 	
 	public void addNode(Blob blob, String name) {
-		_hash_blobs.put(blob, name);
+		_hash_blobs.put(name, blob);
 	}	
 	
 	public void addTree(Tree tree, String name){
-		_hash_trees.put(tree, name);
+		_hash_trees.put(name, tree);
 	}
 	
 	@Override

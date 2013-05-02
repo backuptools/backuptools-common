@@ -32,5 +32,4 @@ public class Blob{
 	public String getName() {
 		return _name;
 	}
-	
 }
