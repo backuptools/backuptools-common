@@ -43,6 +43,10 @@ public class NodeDatabase {
 		_vault_location = vault_location;
 	}
 	
+	public NodeDatabase() {
+		_vault_location = null;
+	}
+
 	public void addLineToIndexFiles(String line){
 		FileOutputStream out = null;
 		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+"index.txt");
@@ -115,5 +119,9 @@ public class NodeDatabase {
 	}
 	public String getName() {
 		return	_vault_location;
+	}
+
+	public void setVaultLocation(String databaseLocation) {
+		_vault_location = databaseLocation;
 	}	
 }
