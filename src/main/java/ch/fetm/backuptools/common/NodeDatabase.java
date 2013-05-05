@@ -1,4 +1,3 @@
-
 /*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
  * 
  *    This file is part of backuptools.
@@ -26,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -95,10 +95,10 @@ public class NodeDatabase {
 		return blob;
 	}
 	
-	public InputStream createInputStreamFromNodeName(String signature){
+	public Reader createInputStreamFromNodeName(String signature){
 		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+signature);
 		try {
-			return new FileInputStream(file.toFile());
+			return new InputStreamReader( new FileInputStream(file.toFile()));
 		} catch (FileNotFoundException e) {
 			return null;
 		}

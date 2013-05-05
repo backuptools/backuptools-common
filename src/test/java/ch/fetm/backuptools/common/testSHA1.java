@@ -1,4 +1,3 @@
-
 /*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
  * 
  *    This file is part of backuptools.
@@ -19,28 +18,33 @@
 
 package ch.fetm.backuptools.common;
 
-import java.nio.file.Paths;
-import java.util.List;
+import static org.junit.Assert.*;
+import java.io.InputStream;
+import org.junit.Test;
 
 import ch.fetm.backuptools.common.sha.SHA1;
+import ch.fetm.backuptools.common.sha.SHA1Signature;
 
-public class Backuptools extends SHA1 {
 
-	private static String root_directory;
-	private static String vault_location;
-	private static String root_restore;
-	/**
-	 * @param args
-	 * @throws Exception 
-	 */
-	public static void main(String[] args) throws Exception {
-		root_directory   	= "/home/florian/Documents/fetm";
-		vault_location      = "/home/florian/BCK";
-		root_restore        = "/home/florian/REST";
+public class testSHA1 {
+	@Test
+	public void testSignature() {
+		StringBuffer sb;
+		SHA1 sha1 = new SHA1();
+		SHA1Signature signature = null;
 		
-		BackupAgent vault = new BackupAgent(new NodeDatabase(vault_location));
-		vault.backupDirectory(Paths.get(root_directory));
+		InputStream f = null;
 		
-		List<Backup> backups = vault.getListBackup();
+		try {
+			f = getClass().getClassLoader().getResourceAsStream("file.txt");
+			signature = sha1.SHA1SignInputStream(f);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		sb = signature.getStringBuffer();		
+		
+		assertEquals(sb.toString(),"f874afa73be7027485fd3e99e6e729c38ba9aeee");
 	}
+
 }

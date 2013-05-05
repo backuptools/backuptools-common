@@ -95,16 +95,6 @@ public class BackupAgent {
 		return null;
 	}
 
-	public void restoreBackupTo(Backup back, String directory) {
-		Path dir = Paths.get(directory+FileSystems.getDefault().getSeparator()+back.getDate().toString());
-		try {
-			Files.createDirectory(dir);
-		} catch (IOException e) {
-		}
-		
-		restoreTreeToDirectory(back.getRoot());
-	}
-
 	public void setDatabase(NodeDatabase data) {
 		this._node_database = data;
 	}
