@@ -21,30 +21,20 @@ package ch.fetm.backuptools.common;
 
 import java.util.Date;
 
+import javax.swing.text.DateFormatter;
+
 public class Backup {
-	private Date   _date;
-	private String _info;
-	private Tree   _root;
+	private String date;
+	private String info;
+	private String sha_root_tree;
 	
-	public Backup(){
-		_date = new Date(System.currentTimeMillis());
-	}
-	
-	public Date getDate(){
-		return _date;
-	}
-	
-	public Tree getRoot(){
-		return _root;
+
+	public Backup(String date, String sha1) {
+		this.date = date;
+		sha_root_tree = sha1;
 	}
 
-	public void setRoot(Tree root) {
-		_root = root;
+	public String getDate(){
+		return date;
 	}
-	
-	public String getInfo(){
-		return _info;
-	}
-
-	
 }

@@ -41,6 +41,6 @@ public class Backuptools extends SHA1 {
 		BackupAgent vault = new BackupAgent(new NodeDatabase(vault_location));
 		vault.backupDirectory(Paths.get(root_directory));
 		
-		List<Backup> backups = vault.getListBackup();
+		List<Backup> backups = vault.getListBackups();
 	}
 }

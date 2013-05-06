@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,6 @@ import ch.fetm.backuptools.common.sha.SHA1;
 
 public class BackupAgent {
 	private NodeDatabase   _node_database    = null;
-	private List<Backup> 	_backups      	  = new ArrayList<Backup>();
 	
 	private Tree pushDirectory(Path file)
 	{
@@ -68,32 +68,31 @@ public class BackupAgent {
 	public void backupDirectory(Path path){
 		SHA1 sha = new SHA1();
 		String signature;
-		Backup backup = new Backup();
+		Backup backup = null;
 		Tree   root   = null;
 		root = pushDirectory(path);
 		_node_database.sendStringBuffer(root.buildData());
-		backup.setRoot(root);
 		signature = sha.SHA1SignStringBuffer(root.buildData()).toString();
-		_backups.add(backup);
-		_node_database.addLineToIndexFiles(backup.getDate().toString()+"\t"+signature+"\n");
+		_node_database.addLineToIndexFiles(Calendar.getInstance().getTime().toString()+"\t"+signature+"\n");
 	}
 
-	public List<Backup> getListBackup() {
+	public List<Backup> getListBackups() {
 		HashMap<String, Date> list = new HashMap<String, Date>();
 		List<Backup> backups = new ArrayList<Backup>();
 		BufferedReader reader = new BufferedReader(_node_database.createInputStreamFromIndex());
 		String line="";
+		Backup backup = null;
 		try {
-			line = reader.readLine();
+			while(true){
+				line = reader.readLine();
+				StringTokenizer token  = new StringTokenizer(line,"\t");	
+				backup = new Backup(token.nextToken(),token.nextToken());
+				if(backup != null)
+					backups.add(backup);
+			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		StringTokenizer token  = new StringTokenizer(line,"\t");
-		
-		Backup b = new Backup();
-		return null;
+		}	
+		return backups;
 	}
 
 	public void setDatabase(NodeDatabase data) {

@@ -39,6 +39,7 @@ public class BackupAgentDirectoryVault {
 	}
 
 	public HashMap<String, String> getBackups(){
+		agent.getListBackups();
 		return null;
 	}
 }
