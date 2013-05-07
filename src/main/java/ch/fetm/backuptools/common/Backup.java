@@ -37,4 +37,8 @@ public class Backup {
 	public String getDate(){
 		return date;
 	}
+	
+	public String getName(){
+		return sha_root_tree;
+	}
 }

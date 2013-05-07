@@ -19,7 +19,9 @@
 package ch.fetm.backuptools.common;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class BackupAgentDirectoryVault {
@@ -38,8 +40,10 @@ public class BackupAgentDirectoryVault {
 		agent.backupDirectory(path);
 	}
 
-	public HashMap<String, String> getBackups(){
-		agent.getListBackups();
-		return null;
+	public List<Backup> getBackups(){
+		return agent.getListBackups();
+	}
+	public void restore(Backup backup, String restore_path) {
+		agent.restore(backup,restore_path);
 	}
 }

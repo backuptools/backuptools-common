@@ -83,13 +83,14 @@ public class BackupAgent {
 		String line="";
 		Backup backup = null;
 		try {
-			while(true){
+			do{
 				line = reader.readLine();
-				StringTokenizer token  = new StringTokenizer(line,"\t");	
-				backup = new Backup(token.nextToken(),token.nextToken());
-				if(backup != null)
+				if(line != null){
+					StringTokenizer token  = new StringTokenizer(line,"\t");	
+					backup = new Backup(token.nextToken(),token.nextToken());
 					backups.add(backup);
-			}
+				}
+			}while(line != null);
 		} catch (IOException e) {
 		}	
 		return backups;
@@ -97,5 +98,11 @@ public class BackupAgent {
 
 	public void setDatabase(NodeDatabase data) {
 		this._node_database = data;
+	}
+
+
+	public void restore(Backup backup, String restore_path) {
+		Path path = Paths.get(restore_path);
+		Tree tree = Trees.get(this._node_database.createInputStreamFromNodeName(backup.getName()));
 	}
 }
