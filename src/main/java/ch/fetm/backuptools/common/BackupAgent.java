@@ -21,6 +21,8 @@ package ch.fetm.backuptools.common;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -100,9 +102,35 @@ public class BackupAgent {
 		this._node_database = data;
 	}
 
-
-	public void restore(Backup backup, String restore_path) {
+	public void restore(String sha, String restore_path) {
 		Path path = Paths.get(restore_path);
-		Tree tree = Trees.get(this._node_database.createInputStreamFromNodeName(backup.getName()));
+		List<TreeInfo> trees = Trees.get(this._node_database.createInputStreamFromNodeName(sha));
+		
+		for(TreeInfo tree : trees){
+			if(tree.type.equals("tree"))
+			{
+				//TODO Use the separtor of filesystem
+				Path treePath = Paths.get(path.toAbsolutePath()+"/"+tree.name);
+				if(!treePath.toFile().exists()){
+					try {
+						Files.createDirectory(treePath);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				restore(tree.SHA,treePath.toAbsolutePath().toString());
+			}
+			
+			if(tree.type.equals("blob"))
+			{
+				InputStream inputstream = _node_database.createInputStreamFromNodeName(tree.SHA);
+				try {
+					Files.copy(inputstream, Paths.get(restore_path+"/"+tree.name));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

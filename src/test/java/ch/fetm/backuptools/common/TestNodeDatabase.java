@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.file.FileSystems;
@@ -98,7 +99,7 @@ public class TestNodeDatabase {
 			
 			database.sendFile(file);
 			
-			BufferedReader in = new BufferedReader(database.createInputStreamFromNodeName(blobname));
+			BufferedReader in = new BufferedReader(new InputStreamReader(database.createInputStreamFromNodeName(blobname)));
 			
 			assertEquals(filecontents, in.readLine());
 	
@@ -121,7 +122,7 @@ public class TestNodeDatabase {
 		
 		database.sendStringBuffer(sb);
 		
-		BufferedReader in = new BufferedReader(database.createInputStreamFromNodeName(blobname));
+		BufferedReader in = new BufferedReader(new InputStreamReader(database.createInputStreamFromNodeName(blobname)));
 		
 		try {
 			assertEquals(filecontents, in.readLine());

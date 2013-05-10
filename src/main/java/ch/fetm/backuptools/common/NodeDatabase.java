@@ -99,10 +99,10 @@ public class NodeDatabase {
 		return blob;
 	}
 	
-	public Reader createInputStreamFromNodeName(String signature){
+	public InputStream createInputStreamFromNodeName(String signature){
 		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+signature);
 		try {
-			return new InputStreamReader( new FileInputStream(file.toFile()));
+			return new FileInputStream(file.toFile());
 		} catch (FileNotFoundException e) {
 			return null;
 		}

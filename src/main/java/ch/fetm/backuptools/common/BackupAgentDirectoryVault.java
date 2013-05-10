@@ -24,26 +24,54 @@ import java.util.HashMap;
 import java.util.List;
 
 
+
 public class BackupAgentDirectoryVault {
 	private NodeDatabase database; 
-	private BackupAgent  agent;   
+	private BackupAgent  agent;
+	private BackupAgentConfig config;   
+	
+	private void initialize(){
+		database = new NodeDatabase();
+		agent    = new BackupAgent(database);		
+	}
 	
 	public BackupAgentDirectoryVault(){
-		database = new NodeDatabase();
-		agent    = new BackupAgent(database);
+		initialize();
 	}
+	
+	public BackupAgentDirectoryVault(BackupAgentConfig config) {
+		initialize();
+		this.config = config;
+		database.setVaultLocation(config.vault_path);
+		
+	}
+
 	public void setVaultDirectory(String databaseLocation) {
 		database.setVaultLocation(databaseLocation);
 	}
-
+	
+	public void setSourceDirectory(String path){
+		config.source_path = path;
+	}
+	
+	public void doBackup(){
+		agent.backupDirectory(Paths.get(config.source_path));
+	}
+	
 	public void backupDirectory(Path path) {
-		agent.backupDirectory(path);
+		config.source_path = path.toAbsolutePath().toString();
+		doBackup();
 	}
 
 	public List<Backup> getBackups(){
 		return agent.getListBackups();
 	}
+
 	public void restore(Backup backup, String restore_path) {
-		agent.restore(backup,restore_path);
+		agent.restore(backup.getName(),restore_path);
+	}
+
+	public BackupAgentConfig getConfiguration() {
+		return config;
 	}
 }
