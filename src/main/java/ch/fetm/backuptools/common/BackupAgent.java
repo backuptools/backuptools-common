@@ -109,8 +109,7 @@ public class BackupAgent {
 		for(TreeInfo tree : trees){
 			if(tree.type.equals("tree"))
 			{
-				//TODO Use the separtor of filesystem
-				Path treePath = Paths.get(path.toAbsolutePath()+"/"+tree.name);
+				Path treePath = Paths.get(path.toAbsolutePath()+FileSystems.getDefault().getSeparator()+tree.name);
 				if(!treePath.toFile().exists()){
 					try {
 						Files.createDirectory(treePath);
@@ -125,9 +124,8 @@ public class BackupAgent {
 			{
 				InputStream inputstream = _node_database.createInputStreamFromNodeName(tree.SHA);
 				try {
-					Files.copy(inputstream, Paths.get(restore_path+"/"+tree.name));
+					Files.copy(inputstream, Paths.get(restore_path+FileSystems.getDefault().getSeparator()+tree.name));
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

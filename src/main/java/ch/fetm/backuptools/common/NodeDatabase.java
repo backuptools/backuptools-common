@@ -63,7 +63,6 @@ public class NodeDatabase {
 		try {
 			out.write(line.getBytes());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -112,7 +111,6 @@ public class NodeDatabase {
 		try {
 			return new FileReader(_vault_location+FileSystems.getDefault().getSeparator()+"index.txt");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
