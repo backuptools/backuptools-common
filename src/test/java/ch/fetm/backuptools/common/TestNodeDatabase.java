@@ -20,14 +20,10 @@ package ch.fetm.backuptools.common;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,14 +39,12 @@ import ch.fetm.backuptools.common.sha.SHA1;
 public class TestNodeDatabase {
 	private NodeDatabase database;
 	private Path db_location;
-	private Path source_location;
 	
 	@Before
 	public void setup(){
 		
 		try {
 			db_location     = Files.createTempDirectory("backuptools");
-			source_location = Files.createTempDirectory("backuptools");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

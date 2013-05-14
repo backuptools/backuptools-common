@@ -19,13 +19,9 @@
 
 package ch.fetm.backuptools.common;
 
-import java.util.Date;
-
-import javax.swing.text.DateFormatter;
 
 public class Backup {
 	private String date;
-	private String info;
 	private String sha_root_tree;
 	
 

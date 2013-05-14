@@ -22,12 +22,9 @@ package ch.fetm.backuptools.common;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -57,12 +54,6 @@ public class BackupAgent {
 
 	}
 
-	
-	private void restoreTreeToDirectory(Tree root) {
-		// TODO Auto-generated method stub
-		
-	}	
-
 	public BackupAgent(NodeDatabase nodeDatabase) {
 		_node_database = nodeDatabase;
 	}
@@ -70,7 +61,6 @@ public class BackupAgent {
 	public void backupDirectory(Path path){
 		SHA1 sha = new SHA1();
 		String signature;
-		Backup backup = null;
 		Tree   root   = null;
 		root = pushDirectory(path);
 		_node_database.sendStringBuffer(root.buildData());
@@ -79,7 +69,6 @@ public class BackupAgent {
 	}
 
 	public List<Backup> getListBackups() {
-		HashMap<String, Date> list = new HashMap<String, Date>();
 		List<Backup> backups = new ArrayList<Backup>();
 		BufferedReader reader = new BufferedReader(_node_database.createInputStreamFromIndex());
 		String line="";

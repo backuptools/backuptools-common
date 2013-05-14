@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 public class BackupAgentConfig implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6328634670433771680L;
+	
 	private String source_path;
 	private String vault_path;
 

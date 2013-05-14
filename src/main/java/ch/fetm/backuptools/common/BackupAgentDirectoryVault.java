@@ -18,9 +18,7 @@
 
 package ch.fetm.backuptools.common;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 
 public class BackupAgentDirectoryVault {
@@ -31,11 +29,6 @@ public class BackupAgentDirectoryVault {
 	private void initialize(){
 		database = new NodeDatabase();
 		agent    = new BackupAgent(database);		
-	}
-	
-	private void backupDirectory(Path path) {
-		config.setSource_path(path.toAbsolutePath().toString());
-		doBackup();
 	}
 	
 	public BackupAgentDirectoryVault(){
