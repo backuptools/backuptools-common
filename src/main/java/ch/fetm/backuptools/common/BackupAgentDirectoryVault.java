@@ -23,8 +23,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
-
-
 public class BackupAgentDirectoryVault {
 	private NodeDatabase database; 
 	private BackupAgent  agent;
@@ -35,6 +33,11 @@ public class BackupAgentDirectoryVault {
 		agent    = new BackupAgent(database);		
 	}
 	
+	private void backupDirectory(Path path) {
+		config.setSource_path(path.toAbsolutePath().toString());
+		doBackup();
+	}
+	
 	public BackupAgentDirectoryVault(){
 		initialize();
 	}
@@ -42,25 +45,16 @@ public class BackupAgentDirectoryVault {
 	public BackupAgentDirectoryVault(BackupAgentConfig config) {
 		initialize();
 		this.config = config;
-		database.setVaultLocation(config.vault_path);
-		
+		database.setVaultLocation(this.config.getVault_path());
 	}
 
-	public void setVaultDirectory(String databaseLocation) {
-		database.setVaultLocation(databaseLocation);
-	}
-	
-	public void setSourceDirectory(String path){
-		config.source_path = path;
+	public void setConfiguration(BackupAgentConfig config){
+		this.config = config;
+		database.setVaultLocation(this.config.getVault_path());
 	}
 	
 	public void doBackup(){
-		agent.backupDirectory(Paths.get(config.source_path));
-	}
-	
-	public void backupDirectory(Path path) {
-		config.source_path = path.toAbsolutePath().toString();
-		doBackup();
+		agent.backupDirectory(Paths.get(config.getSource_path()));
 	}
 
 	public List<Backup> getBackups(){

@@ -1,8 +1,25 @@
 package ch.fetm.backuptools.common;
 
-public class BackupAgentConfig {
+import java.io.Serializable;
 
-	public String source_path;
-	public String vault_path;
+public class BackupAgentConfig implements Serializable {
 
+	private String source_path;
+	private String vault_path;
+
+	public void setSource_path(String path){
+		source_path = path;
+	}
+	
+	public String getSource_path(){
+		return source_path;
+	}
+	
+	public void setVault_path(String path){
+		vault_path = path;
+	}
+	
+	public String getVault_path(){
+		return vault_path;
+	}
 }
