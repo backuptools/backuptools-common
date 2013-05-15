@@ -73,9 +73,4 @@ public abstract class BackupAgenConfigManager {
    
 		return configfile;
 	}
-
-	public static boolean ConfigfileExist() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

@@ -91,13 +91,22 @@ public class BackupAgent {
 		this._node_database = data;
 	}
 
-	public void restore(String sha, String restore_path) {
+	public void restore(TreeInfo tree, String restore_path) {
 		Path path = Paths.get(restore_path);
-		List<TreeInfo> trees = Trees.get(this._node_database.createInputStreamFromNodeName(sha));
 		
-		for(TreeInfo tree : trees){
-			if(tree.type.equals("tree"))
-			{
+		if(tree.type.equals(TreeInfo.TYPE_BLOB)){
+			InputStream inputstream = _node_database.createInputStreamFromNodeName(tree.SHA);
+			try {
+				Files.copy(inputstream, Paths.get(restore_path+FileSystems.getDefault().getSeparator()+tree.name));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(tree.type.equals(TreeInfo.TYPE_TREE)){
+			List<TreeInfo> trees = getTreeInfosOf(tree.SHA);
+			
+			for(TreeInfo treechild : trees){
 				Path treePath = Paths.get(path.toAbsolutePath()+FileSystems.getDefault().getSeparator()+tree.name);
 				if(!treePath.toFile().exists()){
 					try {
@@ -106,18 +115,16 @@ public class BackupAgent {
 						e.printStackTrace();
 					}
 				}
-				restore(tree.SHA,treePath.toAbsolutePath().toString());
+				restore(treechild,treePath.toAbsolutePath().toString());
 			}
 			
-			if(tree.type.equals("blob"))
-			{
-				InputStream inputstream = _node_database.createInputStreamFromNodeName(tree.SHA);
-				try {
-					Files.copy(inputstream, Paths.get(restore_path+FileSystems.getDefault().getSeparator()+tree.name));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
+		
+
+	}
+
+	public List<TreeInfo> getTreeInfosOf(String sha) {
+		List<TreeInfo> trees = Trees.get(this._node_database.createInputStreamFromNodeName(sha));
+		return trees;
 	}
 }
