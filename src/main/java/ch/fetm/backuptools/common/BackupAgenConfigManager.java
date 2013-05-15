@@ -39,13 +39,13 @@ public abstract class BackupAgenConfigManager {
 			if(Files.exists(configfile)){
 					Files.delete(configfile);
 				
-			}else{
-				Files.createFile(configfile);
-				XMLEncoder out = new XMLEncoder( new FileOutputStream(configfile.toFile()));
-				out.writeObject(config);
-				out.flush();
-				out.close();
 			}
+			
+			Files.createFile(configfile);
+			XMLEncoder out = new XMLEncoder( new FileOutputStream(configfile.toFile()));
+			out.writeObject(config);
+			out.flush();
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
