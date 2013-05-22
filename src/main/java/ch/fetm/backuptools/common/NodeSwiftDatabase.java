@@ -15,15 +15,28 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package ch.fetm.backuptools.common;
 
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Path;
 
+import org.jclouds.ContextBuilder;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.openstack.swift.SwiftApiMetadata;
+import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
+import org.jclouds.providers.ProviderMetadata;
+
 public class NodeSwiftDatabase implements INodeDatabase {
+	private BlobStore store;
 	
 	public NodeSwiftDatabase(){
+		BlobStoreContext context = ContextBuilder.newBuilder(new SwiftApiMetadata()).credentials("toto", "tata")
+																				    .endpoint("localhost")
+																				    .buildApi(BlobStoreContext.class);
+		store = context.getBlobStore();
 	}
 	
 	@Override
