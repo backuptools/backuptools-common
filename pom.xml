@@ -25,6 +25,11 @@
   		<artifactId>junit</artifactId>
   		<version>4.11</version>
   	</dependency>
+  	<dependency>
+  		<groupId>org.jclouds</groupId>
+  		<artifactId>jclouds-all</artifactId>
+  		<version>1.6.0</version>
+  	</dependency>
   </dependencies>
   <properties>
   	<project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
