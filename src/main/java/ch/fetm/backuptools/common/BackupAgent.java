@@ -31,7 +31,7 @@ import java.util.StringTokenizer;
 import ch.fetm.backuptools.common.sha.SHA1;
 
 public class BackupAgent {
-	private NodeDatabase   _node_database    = null;
+	private INodeDatabase   _node_database    = null;
 	
 	private Tree pushDirectory(Path file)
 	{
@@ -54,7 +54,7 @@ public class BackupAgent {
 
 	}
 
-	public BackupAgent(NodeDatabase nodeDatabase) {
+	public BackupAgent(INodeDatabase nodeDatabase) {
 		_node_database = nodeDatabase;
 	}
 	
@@ -87,7 +87,7 @@ public class BackupAgent {
 		return backups;
 	}
 
-	public void setDatabase(NodeDatabase data) {
+	public void setDatabase(INodeDatabase data) {
 		this._node_database = data;
 	}
 

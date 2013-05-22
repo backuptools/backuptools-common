@@ -34,18 +34,22 @@ import java.nio.file.Paths;
 import ch.fetm.backuptools.common.sha.SHA1;
 import ch.fetm.backuptools.common.sha.SHA1Signature;
 
-public class NodeDatabase {
+public class NodeDirectoryDatabase implements INodeDatabase {
 	
 	private String _vault_location;
 
-	public NodeDatabase(String vault_location) {
+	public NodeDirectoryDatabase(String vault_location) {
 		_vault_location = vault_location;
 	}
 	
-	public NodeDatabase() {
+	public NodeDirectoryDatabase() {
 		_vault_location = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see ch.fetm.backuptools.common.INodeDatabase#addLineToIndexFiles(java.lang.String)
+	 */
+	@Override
 	public void addLineToIndexFiles(String line){
 		FileOutputStream out = null;
 		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+"index.txt");
@@ -66,6 +70,10 @@ public class NodeDatabase {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ch.fetm.backuptools.common.INodeDatabase#sendStringBuffer(java.lang.StringBuffer)
+	 */
+	@Override
 	public void sendStringBuffer(StringBuffer sb) {
 		SHA1 sha = new SHA1();
 		SHA1Signature sign = sha.SHA1SignStringBuffer(sb);
@@ -79,6 +87,10 @@ public class NodeDatabase {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see ch.fetm.backuptools.common.INodeDatabase#sendFile(java.nio.file.Path)
+	 */
+	@Override
 	public Blob sendFile(Path file){
 		SHA1 sha  = new SHA1();
 		Blob blob = null;
@@ -97,6 +109,10 @@ public class NodeDatabase {
 		return blob;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ch.fetm.backuptools.common.INodeDatabase#createInputStreamFromNodeName(java.lang.String)
+	 */
+	@Override
 	public InputStream createInputStreamFromNodeName(String signature){
 		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+signature);
 		try {
@@ -106,6 +122,10 @@ public class NodeDatabase {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ch.fetm.backuptools.common.INodeDatabase#createInputStreamFromIndex()
+	 */
+	@Override
 	public Reader createInputStreamFromIndex() {
 		try {
 			return new FileReader(_vault_location+FileSystems.getDefault().getSeparator()+"index.txt");
@@ -114,7 +134,7 @@ public class NodeDatabase {
 		}
 		return null;
 	}
-	public String getName() {
+	public String getVaultLocation() {
 		return	_vault_location;
 	}
 

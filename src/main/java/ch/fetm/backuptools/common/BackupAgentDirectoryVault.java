@@ -22,12 +22,12 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class BackupAgentDirectoryVault {
-	private NodeDatabase database; 
+	private NodeDirectoryDatabase database; 
 	private BackupAgent  agent;
 	private BackupAgentConfig config;   
 	
 	private void initialize(){
-		database = new NodeDatabase();
+		database = new NodeDirectoryDatabase();
 		agent    = new BackupAgent(database);		
 	}
 	

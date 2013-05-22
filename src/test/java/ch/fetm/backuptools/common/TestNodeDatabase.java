@@ -33,11 +33,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.fetm.backuptools.common.NodeDatabase;
+import ch.fetm.backuptools.common.NodeDirectoryDatabase;
 import ch.fetm.backuptools.common.sha.SHA1;
 
 public class TestNodeDatabase {
-	private NodeDatabase database;
+	private INodeDatabase database;
 	private Path db_location;
 	
 	@Before
@@ -49,7 +49,7 @@ public class TestNodeDatabase {
 			e.printStackTrace();
 		}
 		
-		database = new NodeDatabase(db_location.toAbsolutePath().toString());
+		database = new NodeDirectoryDatabase(db_location.toAbsolutePath().toString());
 	}
 	
 	@After
