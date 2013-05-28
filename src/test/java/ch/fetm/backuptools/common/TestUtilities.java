@@ -18,22 +18,20 @@
 
 package ch.fetm.backuptools.common;
 
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
-public interface INodeDatabase {
-	
-	public abstract BlobList getBlobList();
-	
-	public abstract void addLineToIndexFiles(String line);
+public class TestUtilities {
 
-	public abstract String sendStringBuffer(StringBuffer sb);
-
-	public abstract Blob sendFile(Path file);
-
-	public abstract InputStream createInputStreamFromNodeName(String signature);
-
-	public abstract Reader createInputStreamFromIndex();
-
+	public static Path createTemporyFile() {
+		try {
+			return Files.createTempDirectory("backuptools");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+		
 }
+

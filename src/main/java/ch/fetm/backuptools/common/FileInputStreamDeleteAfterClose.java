@@ -1,3 +1,4 @@
+package ch.fetm.backuptools.common;
 /*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
  * 
  *    This file is part of backuptools.
@@ -16,24 +17,38 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common;
-
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
-public interface INodeDatabase {
+public class FileInputStreamDeleteAfterClose extends InputStream {
+	FileInputStream file;
+	Path filepath;
 	
-	public abstract BlobList getBlobList();
+	@Override
+	public int read() throws IOException {
+		return file.read();
+	}
 	
-	public abstract void addLineToIndexFiles(String line);
-
-	public abstract String sendStringBuffer(StringBuffer sb);
-
-	public abstract Blob sendFile(Path file);
-
-	public abstract InputStream createInputStreamFromNodeName(String signature);
-
-	public abstract Reader createInputStreamFromIndex();
+	public FileInputStreamDeleteAfterClose(Path file){
+		
+		this.filepath = file;
+		
+		try {
+			this.file = new FileInputStream(file.toFile());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void close() throws IOException {
+		super.close();
+		Files.delete(filepath);
+	}
 
 }

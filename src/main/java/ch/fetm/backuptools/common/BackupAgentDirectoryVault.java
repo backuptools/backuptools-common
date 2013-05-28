@@ -47,7 +47,7 @@ public class BackupAgentDirectoryVault {
 	}
 	
 	public void doBackup(){
-		agent.backupDirectory(Paths.get(config.getSource_path()));
+		agent.backupDirectory(config.getSource_path());
 	}
 
 	public List<Backup> getBackups(){

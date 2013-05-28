@@ -15,6 +15,7 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package ch.fetm.backuptools.common;
 
 import static org.junit.Assert.*;
@@ -25,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -36,21 +36,19 @@ import org.junit.Test;
 import ch.fetm.backuptools.common.NodeDirectoryDatabase;
 import ch.fetm.backuptools.common.sha.SHA1;
 
-public class TestNodeDatabase {
+public class NodeDirectoryDatabaseTest {
 	private INodeDatabase database;
 	private Path db_location;
 	
 	@Before
 	public void setup(){
 		
-		try {
-			db_location     = Files.createTempDirectory("backuptools");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		db_location = TestUtilities.createTemporyFile();
 		
-		database = new NodeDirectoryDatabase(db_location.toAbsolutePath().toString());
+		database = new NodeDirectoryDatabase(db_location);
 	}
+
+
 	
 	@After
 	public void tearDown(){
@@ -121,7 +119,6 @@ public class TestNodeDatabase {
 		try {
 			assertEquals(filecontents, in.readLine());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}

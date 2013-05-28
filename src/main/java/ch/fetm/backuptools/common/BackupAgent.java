@@ -1,4 +1,3 @@
-
 /*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
  * 
  *    This file is part of backuptools.
@@ -63,8 +62,7 @@ public class BackupAgent {
 		String signature;
 		Tree   root   = null;
 		root = pushDirectory(path);
-		_node_database.sendStringBuffer(root.buildData());
-		signature = sha.SHA1SignStringBuffer(root.buildData()).toString();
+		signature = _node_database.sendStringBuffer(root.buildData());
 		_node_database.addLineToIndexFiles(Calendar.getInstance().getTime().toString()+"\t"+signature+"\n");
 	}
 

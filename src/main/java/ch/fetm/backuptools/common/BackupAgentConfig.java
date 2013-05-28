@@ -19,6 +19,7 @@
 package ch.fetm.backuptools.common;
 
 import java.io.Serializable;
+import java.nio.file.Path;
 
 public class BackupAgentConfig implements Serializable {
 
@@ -27,22 +28,22 @@ public class BackupAgentConfig implements Serializable {
 	 */
 	private static final long serialVersionUID = 6328634670433771680L;
 	
-	private String source_path;
-	private String vault_path;
+	private Path source_path;
+	private Path vault_path;
 
-	public void setSource_path(String path){
+	public void setSource_path(Path path){
 		source_path = path;
 	}
 	
-	public String getSource_path(){
+	public Path getSource_path(){
 		return source_path;
 	}
 	
-	public void setVault_path(String path){
+	public void setVault_path(Path path){
 		vault_path = path;
 	}
 	
-	public String getVault_path(){
+	public Path getVault_path(){
 		return vault_path;
 	}
 }

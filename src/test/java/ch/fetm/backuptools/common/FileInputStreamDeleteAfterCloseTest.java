@@ -18,22 +18,36 @@
 
 package ch.fetm.backuptools.common;
 
-import java.io.InputStream;
-import java.io.Reader;
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
-public interface INodeDatabase {
-	
-	public abstract BlobList getBlobList();
-	
-	public abstract void addLineToIndexFiles(String line);
+import org.junit.Test;
 
-	public abstract String sendStringBuffer(StringBuffer sb);
-
-	public abstract Blob sendFile(Path file);
-
-	public abstract InputStream createInputStreamFromNodeName(String signature);
-
-	public abstract Reader createInputStreamFromIndex();
+public class FileInputStreamDeleteAfterCloseTest {
+	@Test
+	public void test() {
+		Path path = null;
+		try {
+			path = Files.createTempFile("tata", "__");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertTrue(Files.exists(path));
+		
+		FileInputStreamDeleteAfterClose in = new FileInputStreamDeleteAfterClose(path);
+		try {
+			in.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertFalse(Files.exists(path));
+	}
 
 }

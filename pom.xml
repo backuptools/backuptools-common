@@ -26,9 +26,9 @@
   		<version>4.11</version>
   	</dependency>
   	<dependency>
-  		<groupId>org.jclouds</groupId>
-  		<artifactId>jclouds-all</artifactId>
-  		<version>1.6.0</version>
+  		<groupId>com.jcraft</groupId>
+  		<artifactId>jsch</artifactId>
+  		<version>0.1.42</version>
   	</dependency>
   </dependencies>
   <properties>

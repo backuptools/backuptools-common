@@ -26,7 +26,7 @@ import ch.fetm.backuptools.common.sha.SHA1;
 import ch.fetm.backuptools.common.sha.SHA1Signature;
 
 
-public class testSHA1 {
+public class SHA1Test {
 	@Test
 	public void testSignature() {
 		StringBuffer sb;

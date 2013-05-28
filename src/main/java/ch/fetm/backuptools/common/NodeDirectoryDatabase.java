@@ -35,11 +35,17 @@ import ch.fetm.backuptools.common.sha.SHA1;
 import ch.fetm.backuptools.common.sha.SHA1Signature;
 
 public class NodeDirectoryDatabase implements INodeDatabase {
-	
-	private String _vault_location;
 
-	public NodeDirectoryDatabase(String vault_location) {
+	private BlobList blobs;
+	private Path _vault_location;
+	
+	private String getBlobIndexName() {
+		return _vault_location+FileSystems.getDefault().getSeparator()+"blob.txt";
+	}
+
+	public NodeDirectoryDatabase(Path vault_location) {
 		_vault_location = vault_location;
+		blobs = new BlobList(Paths.get(getBlobIndexName()));
 	}
 	
 	public NodeDirectoryDatabase() {
@@ -74,7 +80,7 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 	 * @see ch.fetm.backuptools.common.INodeDatabase#sendStringBuffer(java.lang.StringBuffer)
 	 */
 	@Override
-	public void sendStringBuffer(StringBuffer sb) {
+	public String sendStringBuffer(StringBuffer sb) {
 		SHA1 sha = new SHA1();
 		SHA1Signature sign = sha.SHA1SignStringBuffer(sb);
 		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+sign.toString());
@@ -85,6 +91,7 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 				e.printStackTrace();
 			}
 		}
+		return sign.toString();
 	}
 
 	/* (non-Javadoc)
@@ -106,6 +113,7 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 			}
 		}	
 		blob = new Blob(blobName);
+		blobs.add(blob.getName());
 		return blob;
 	}
 	
@@ -134,11 +142,18 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 		}
 		return null;
 	}
-	public String getVaultLocation() {
+
+	public Path getVaultLocation() {
 		return	_vault_location;
 	}
 
-	public void setVaultLocation(String databaseLocation) {
+	public void setVaultLocation(Path databaseLocation) {
 		_vault_location = databaseLocation;
-	}	
+	}
+
+	@Override
+	public BlobList getBlobList() {
+		return blobs;
+	}
+
 }
