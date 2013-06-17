@@ -44,8 +44,7 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 	}
 
 	public NodeDirectoryDatabase(Path vault_location) {
-		_vault_location = vault_location;
-		blobs = new BlobList(Paths.get(getBlobIndexName()));
+		setVaultLocation(vault_location);
 	}
 	
 	public NodeDirectoryDatabase() {
@@ -58,7 +57,7 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 	@Override
 	public void addLineToIndexFiles(String line){
 		FileOutputStream out = null;
-		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+"index.txt");
+		Path file = Paths.get(getIndexFileName());
 		try {
 			out = new FileOutputStream(file.toFile(),true);
 		} catch (FileNotFoundException e1) {
@@ -136,11 +135,15 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 	@Override
 	public Reader createInputStreamFromIndex() {
 		try {
-			return new FileReader(_vault_location+FileSystems.getDefault().getSeparator()+"index.txt");
+			return new FileReader(getIndexFileName());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private String getIndexFileName() {
+		return _vault_location+FileSystems.getDefault().getSeparator()+"index.txt";
 	}
 
 	public Path getVaultLocation() {
@@ -149,11 +152,34 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 
 	public void setVaultLocation(Path databaseLocation) {
 		_vault_location = databaseLocation;
+		if(!isFSInitialized())
+			initFS();
+		blobs = new BlobList(Paths.get(getBlobIndexName()));
 	}
 
 	@Override
 	public BlobList getBlobList() {
 		return blobs;
+	}
+
+	@Override
+	public void initFS() {
+		Path indexbackup = Paths.get(getIndexFileName());
+		Path indexblobs  = Paths.get(getBlobIndexName());
+		
+		try {
+			Files.createFile(indexbackup);
+			Files.createFile(indexblobs);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public boolean isFSInitialized() {
+		Path path = Paths.get(getIndexFileName());
+		return Files.exists(path);
 	}
 
 }

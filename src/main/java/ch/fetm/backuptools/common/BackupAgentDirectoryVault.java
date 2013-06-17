@@ -38,7 +38,7 @@ public class BackupAgentDirectoryVault {
 	public BackupAgentDirectoryVault(BackupAgentConfig config) {
 		initialize();
 		this.config = config;
-		database.setVaultLocation(this.config.getVault_path());
+		database.setVaultLocation(config.getVault_path());
 	}
 
 	public void setConfiguration(BackupAgentConfig config){

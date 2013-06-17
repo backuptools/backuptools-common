@@ -22,52 +22,63 @@ import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 
 public abstract class BackupAgenConfigManager {
 
-	public final static BackupAgentConfig readConfigurationFile() {
-		BackupAgentConfig config = new BackupAgentConfig();
-    	
+	public final static void writeConfigurationFile(BackupAgentConfig config) {
+		Properties properties = new Properties();
 		Path configfile = getConfigFile();
-		if(!Files.exists(configfile))
-			return null;
+		
+		if(Files.exists(configfile)){
+			try {
+				Files.delete(configfile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	
+		properties.setProperty("source", config.getSource_path().toAbsolutePath().toString());
+		properties.setProperty("vault", config.getVault_path().toAbsolutePath().toString());
 		
 		try {
-			XMLDecoder in = new XMLDecoder( new BufferedInputStream( 
-												new FileInputStream(configfile.toFile())));
-			config = (BackupAgentConfig) in.readObject();
-			in.close();
-		} catch (Exception e) {
+			OutputStream out = new FileOutputStream(configfile.toFile());
+			properties.store(out , "--- No comments---");
+			out.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return config;
 	}
 
-	public static void writeConfigurationInFile(BackupAgentConfig config) {
+	public static BackupAgentConfig readConfigurationInFile() {
+		BackupAgentConfig config = new BackupAgentConfig();
+		Properties properties = new Properties();
 		Path configfile = getConfigFile();
-		try {	
-			if(Files.exists(configfile)){
-					Files.delete(configfile);
-				
-			}
+		try {
+			InputStream in = new FileInputStream(configfile.toFile());
+			properties.load(in);
+			config.setSource_path(Paths.get(properties.getProperty("source")));
+			config.setVault_path(Paths.get(properties.getProperty("vault")));
 			
-			Files.createFile(configfile);
-			XMLEncoder out = new XMLEncoder( new FileOutputStream(configfile.toFile()));
-			out.writeObject(config);
-			out.flush();
-			out.close();
+			in.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			config = null;
 		}
-			
+		return config;	
     }
 
 	private static Path getConfigFile() {
@@ -87,7 +98,7 @@ public abstract class BackupAgenConfigManager {
     	
     	Path configfile = Paths.get( path.toAbsolutePath().toString() 
     								 + FileSystems.getDefault().getSeparator()
-    								 + "config.xml");
+    								 + "config.properties");
    
 		return configfile;
 	}

@@ -35,5 +35,8 @@ public interface INodeDatabase {
 	public abstract InputStream createInputStreamFromNodeName(String signature);
 
 	public abstract Reader createInputStreamFromIndex();
+	
+	public abstract void initFS();
 
+	public abstract boolean isFSInitialized();
 }

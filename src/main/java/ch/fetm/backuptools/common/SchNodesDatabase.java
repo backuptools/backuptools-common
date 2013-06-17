@@ -114,4 +114,16 @@ public class SchNodesDatabase implements INodeDatabase {
 	public BlobList getBlobList() {
 		return fsDatabase.getBlobList();
 	}
+
+	@Override
+	public void initFS() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isFSInitialized() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
