@@ -27,7 +27,12 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import ch.fetm.backuptools.common.sha.SHA1;
+import ch.fetm.backuptools.common.datanode.INodeDatabase;
+import ch.fetm.backuptools.common.model.Backup;
+import ch.fetm.backuptools.common.model.Blob;
+import ch.fetm.backuptools.common.model.Tree;
+import ch.fetm.backuptools.common.model.TreeInfo;
+import ch.fetm.backuptools.common.tools.SHA1;
 
 public class BackupAgent {
 	private INodeDatabase   _node_database    = null;
@@ -37,13 +42,18 @@ public class BackupAgent {
 		Tree tree = new Tree();
 		try(DirectoryStream<Path> directories = Files.newDirectoryStream(file)){
 			for(Path childfile : directories){
+				TreeInfo tinfo = new  TreeInfo();
 				if(childfile.toFile().isFile()){
 					Blob blob = _node_database.sendFile(childfile);
-					tree.addNode(blob, childfile.getFileName().toString());						
+					tinfo.type = TreeInfo.TYPE_BLOB;
+					tinfo.SHA  = blob.getName();				
 				}else{
 					Tree childTree = pushDirectory(childfile); 
-					tree.addTree(childTree,childfile.getFileName().toString());
+					tinfo.type = TreeInfo.TYPE_TREE;
+					tinfo.SHA  = childTree.getName();
 				}
+				tinfo.name = childfile.getFileName().toString();
+				tree.addTreeInfo(tinfo);		
 			}				
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -56,7 +66,6 @@ public class BackupAgent {
 	public BackupAgent(INodeDatabase nodeDatabase) {
 		_node_database = nodeDatabase;
 	}
-	
 	public void backupDirectory(Path path){
 		SHA1 sha = new SHA1();
 		String signature;
@@ -65,7 +74,6 @@ public class BackupAgent {
 		signature = _node_database.sendStringBuffer(root.buildData());
 		_node_database.addLineToIndexFiles(Calendar.getInstance().getTime().toString()+"\t"+signature+"\n");
 	}
-
 	public List<Backup> getListBackups() {
 		List<Backup> backups = new ArrayList<Backup>();
 		BufferedReader reader = new BufferedReader(_node_database.createInputStreamFromIndex());
@@ -84,45 +92,45 @@ public class BackupAgent {
 		}	
 		return backups;
 	}
-
 	public void setDatabase(INodeDatabase data) {
 		this._node_database = data;
 	}
-
-	public void restore(TreeInfo tree, String restore_path) {
+	public void restore(TreeInfo treeinfo, String restore_path){
+		restore(getTreeInfosOf(treeinfo.SHA),restore_path);		
+	}
+	public void restore(Tree tree, String restore_path) {
 		Path path = Paths.get(restore_path);
+		List<TreeInfo> listTreeInfos = tree.getAllTreeInfo();
 		
-		if(tree.type.equals(TreeInfo.TYPE_BLOB)){
-			InputStream inputstream = _node_database.createInputStreamFromNodeName(tree.SHA);
-			try {
-				Files.copy(inputstream, Paths.get(restore_path+FileSystems.getDefault().getSeparator()+tree.name));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		if(tree.type.equals(TreeInfo.TYPE_TREE)){
-			List<TreeInfo> trees = getTreeInfosOf(tree.SHA);
-			
-			for(TreeInfo treechild : trees){
-				Path treePath = Paths.get(path.toAbsolutePath()+FileSystems.getDefault().getSeparator()+tree.name);
-				if(!treePath.toFile().exists()){
-					try {
-						Files.createDirectory(treePath);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+		for(TreeInfo ti : listTreeInfos){
+			if(ti.type.equals(TreeInfo.TYPE_BLOB)){
+				InputStream inputstream = _node_database.createInputStreamFromNodeName(ti.SHA);
+				try {
+					Files.copy(inputstream, Paths.get(restore_path+FileSystems.getDefault().getSeparator()+ti.name));
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				restore(treechild,treePath.toAbsolutePath().toString());
 			}
-			
+			if(ti.type.equals(TreeInfo.TYPE_TREE)){
+				Path treePath = Paths.get(path.toAbsolutePath()+FileSystems.getDefault().getSeparator()+ti.name);
+				if(!treePath.toFile().exists()){
+				try {
+				  Files.createDirectory(treePath);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+					restore(getTreeInfosOf(ti.SHA),treePath.toAbsolutePath().toString());
+				}
+				
+			}	
 		}
+		
+
 		
 
 	}
-
-	public List<TreeInfo> getTreeInfosOf(String sha) {
-		List<TreeInfo> trees = Trees.get(this._node_database.createInputStreamFromNodeName(sha));
-		return trees;
+	public Tree getTreeInfosOf(String sha) {
+		Tree tree = new Tree(this._node_database.createInputStreamFromNodeName(sha));
+		return tree;
 	}
 }

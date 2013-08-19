@@ -1,3 +1,4 @@
+package ch.fetm.backuptools.common.tools;
 /*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
  * 
  *    This file is part of backuptools.
@@ -16,27 +17,38 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common.sha;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-public class SHA1Signature {
-	private byte[] md;
+public class FileInputStreamDeleteAfterClose extends InputStream {
+	FileInputStream file;
+	Path filepath;
 	
-	public SHA1Signature(byte[] digest) {
-		md = digest;
+	@Override
+	public int read() throws IOException {
+		return file.read();
 	}
-
 	
-	public StringBuffer getStringBuffer() {
+	public FileInputStreamDeleteAfterClose(Path file){
 		
-		StringBuffer sb = new StringBuffer("");
-	
-		for(int i =0; i<md.length; i++){
-			sb.append(Integer.toString((md[i]&0xff)+ 0x100,16).substring(1));
+		this.filepath = file;
+		
+		try {
+			this.file = new FileInputStream(file.toFile());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return sb;
 	}
 	
-	public String toString(){
-		return getStringBuffer().toString();
+	@Override
+	public void close() throws IOException {
+		super.close();
+		Files.delete(filepath);
 	}
+
 }

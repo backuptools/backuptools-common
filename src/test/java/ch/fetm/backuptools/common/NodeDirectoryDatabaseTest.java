@@ -33,8 +33,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.fetm.backuptools.common.NodeDirectoryDatabase;
-import ch.fetm.backuptools.common.sha.SHA1;
+import ch.fetm.backuptools.common.datanode.INodeDatabase;
+import ch.fetm.backuptools.common.datanode.NodeDirectoryDatabase;
+import ch.fetm.backuptools.common.tools.SHA1;
 
 public class NodeDirectoryDatabaseTest {
 	private INodeDatabase database;

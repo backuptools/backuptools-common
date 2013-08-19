@@ -30,6 +30,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.fetm.backuptools.common.model.BlobList;
+
 public class BlobListTest {
 	BlobList list;
 	Path filepath;

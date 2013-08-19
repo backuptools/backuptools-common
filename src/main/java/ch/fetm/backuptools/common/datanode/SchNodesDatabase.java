@@ -16,7 +16,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common;
+package ch.fetm.backuptools.common.datanode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +25,11 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import ch.fetm.backuptools.common.model.Blob;
+import ch.fetm.backuptools.common.model.BlobList;
+import ch.fetm.backuptools.common.tools.FileInputStreamDeleteAfterClose;
+import ch.fetm.backuptools.common.tools.ScpClient;
 
 public class SchNodesDatabase implements INodeDatabase {
 	private INodeDatabase fsDatabase;

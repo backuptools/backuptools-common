@@ -1,4 +1,3 @@
-
 /*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
  * 
  *    This file is part of backuptools.
@@ -17,19 +16,27 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common;
+package ch.fetm.backuptools.common.tools;
 
-
-public class Blob{
+public class SHA1Signature {
+	private byte[] md;
 	
-	private String _name;
-	
-	public Blob(String name)
-	{
-		_name = name;
+	public SHA1Signature(byte[] digest) {
+		md = digest;
 	}
 
-	public String getName() {
-		return _name;
+	
+	public StringBuffer getStringBuffer() {
+		
+		StringBuffer sb = new StringBuffer("");
+	
+		for(int i =0; i<md.length; i++){
+			sb.append(Integer.toString((md[i]&0xff)+ 0x100,16).substring(1));
+		}
+		return sb;
+	}
+	
+	public String toString(){
+		return getStringBuffer().toString();
 	}
 }

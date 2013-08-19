@@ -16,11 +16,14 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common;
+package ch.fetm.backuptools.common.datanode;
 
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Path;
+
+import ch.fetm.backuptools.common.model.Blob;
+import ch.fetm.backuptools.common.model.BlobList;
 
 public interface INodeDatabase {
 	

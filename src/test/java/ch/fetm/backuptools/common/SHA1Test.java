@@ -22,8 +22,8 @@ import static org.junit.Assert.*;
 import java.io.InputStream;
 import org.junit.Test;
 
-import ch.fetm.backuptools.common.sha.SHA1;
-import ch.fetm.backuptools.common.sha.SHA1Signature;
+import ch.fetm.backuptools.common.tools.SHA1;
+import ch.fetm.backuptools.common.tools.SHA1Signature;
 
 
 public class SHA1Test {

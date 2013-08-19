@@ -1,3 +1,4 @@
+
 /*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
  * 
  *    This file is part of backuptools.
@@ -16,17 +17,19 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common;
+package ch.fetm.backuptools.common.model;
 
-public class TreeInfo {
-	public static String TYPE_TREE = "tree";
-	public static String TYPE_BLOB = "blob";
-	public String SHA;
-	public String type;
-	public String name;
+
+public class Blob{
 	
-	@Override
-	public String toString() {
-		return name;
+	private String _name;
+	
+	public Blob(String name)
+	{
+		_name = name;
+	}
+
+	public String getName() {
+		return _name;
 	}
 }

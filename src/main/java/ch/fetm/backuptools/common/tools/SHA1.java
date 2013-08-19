@@ -16,7 +16,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common.sha;
+package ch.fetm.backuptools.common.tools;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;

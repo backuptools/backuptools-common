@@ -21,6 +21,11 @@ package ch.fetm.backuptools.common;
 import java.nio.file.Paths;
 import java.util.List;
 
+import ch.fetm.backuptools.common.datanode.NodeDirectoryDatabase;
+import ch.fetm.backuptools.common.model.Backup;
+import ch.fetm.backuptools.common.model.Tree;
+import ch.fetm.backuptools.common.model.TreeInfo;
+
 public class BackupAgentDirectoryVault {
 	private NodeDirectoryDatabase database; 
 	private BackupAgent  agent;
@@ -54,14 +59,18 @@ public class BackupAgentDirectoryVault {
 		return agent.getListBackups();
 	}
 
-	public void restore(TreeInfo backup, String restore_path) {
+	public void restore(Tree backup, String restore_path) {
 		agent.restore(backup,restore_path);
 	}
-	public List<TreeInfo> getTreeInfosOf(String sha) {
+	public Tree getTreeInfosOf(String sha) {
 		return agent.getTreeInfosOf(sha);
 	}
 
 	public BackupAgentConfig getConfiguration() {
 		return config;
+	}
+
+	public void restore(TreeInfo tree, String restore_path) {
+		agent.restore(tree, restore_path);
 	}
 }

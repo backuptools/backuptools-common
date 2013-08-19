@@ -16,7 +16,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common;
+package ch.fetm.backuptools.common.datanode;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -31,8 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import ch.fetm.backuptools.common.sha.SHA1;
-import ch.fetm.backuptools.common.sha.SHA1Signature;
+import ch.fetm.backuptools.common.model.Blob;
+import ch.fetm.backuptools.common.model.BlobList;
+import ch.fetm.backuptools.common.tools.SHA1;
+import ch.fetm.backuptools.common.tools.SHA1Signature;
 
 public class NodeDirectoryDatabase implements INodeDatabase {
 

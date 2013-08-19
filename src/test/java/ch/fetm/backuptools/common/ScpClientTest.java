@@ -29,6 +29,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.fetm.backuptools.common.tools.ScpClient;
+
 public class ScpClientTest {
 	private ScpClient sftp;
 	private String name = "test";

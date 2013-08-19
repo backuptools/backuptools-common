@@ -24,6 +24,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.fetm.backuptools.common.model.Tree;
+import ch.fetm.backuptools.common.model.TreeInfo;
+
 public class TreeTest {
 	private Tree tree;
 	
@@ -31,14 +34,43 @@ public class TreeTest {
 	public void setUp() throws Exception {
 		tree = new Tree();
 		Tree childTree = new Tree();
-		Blob blob = new Blob("ASDFADSF");
-		tree.addNode(blob, "Blob1");
-		tree.addNode(blob, "Blob3");
-		tree.addNode(blob, "Blob2");
+		TreeInfo tinfo1 = new TreeInfo();
+		tinfo1.type = TreeInfo.TYPE_BLOB;
+		tinfo1.SHA  = "ASDFADSF";
+		tinfo1.name = "Blob1";
 		
-		tree.addTree(childTree, "Tree1");
-		tree.addTree(childTree, "Tree3");
-		tree.addTree(childTree, "Tree2");
+		TreeInfo tinfo2 = new TreeInfo();
+		tinfo2.type = TreeInfo.TYPE_BLOB;
+		tinfo2.SHA  = "ASDFADSF";
+		tinfo2.name = "Blob2";
+		
+		TreeInfo tinfo3 = new TreeInfo();
+		tinfo3.type = TreeInfo.TYPE_BLOB;
+		tinfo3.SHA  = "ASDFADSF";
+		tinfo3.name = "Blob3";
+
+		tree.addTreeInfo(tinfo1);
+		tree.addTreeInfo(tinfo3);
+		tree.addTreeInfo(tinfo2);
+
+		TreeInfo tinfo01 = new TreeInfo();
+		tinfo01.type = TreeInfo.TYPE_TREE;
+		tinfo01.SHA  = "ASDFADSF";
+		tinfo01.name = "Tree1";
+		
+		TreeInfo tinfo02 = new TreeInfo();
+		tinfo02.type = TreeInfo.TYPE_TREE;
+		tinfo02.SHA  = "ASDFADSF";
+		tinfo02.name = "Tree2";
+		
+		TreeInfo tinfo03 = new TreeInfo();
+		tinfo03.type = TreeInfo.TYPE_TREE;
+		tinfo03.SHA  = "ASDFADSF";
+		tinfo03.name = "Tree3";
+
+		tree.addTreeInfo(tinfo01);
+		tree.addTreeInfo(tinfo03);
+		tree.addTreeInfo(tinfo02);
 	}
 
 	@After
@@ -51,9 +83,9 @@ public class TreeTest {
 		StringBuffer result = new StringBuffer( "blob\tASDFADSF\tBlob1\n"+
 									  			"blob\tASDFADSF\tBlob2\n"+
 									  			"blob\tASDFADSF\tBlob3\n"+
-									  			"tree\tda39a3ee5e6b4b0d3255bfef95601890afd80709\tTree1\n"+
-									  			"tree\tda39a3ee5e6b4b0d3255bfef95601890afd80709\tTree2\n"+
-									  			"tree\tda39a3ee5e6b4b0d3255bfef95601890afd80709\tTree3\n");
+									  			"tree\tASDFADSF\tTree1\n"+
+									  			"tree\tASDFADSF\tTree2\n"+
+									  			"tree\tASDFADSF\tTree3\n");
 		
 		StringBuffer string = tree.buildData();
 		

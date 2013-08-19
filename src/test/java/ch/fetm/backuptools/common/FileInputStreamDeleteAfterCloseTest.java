@@ -26,6 +26,8 @@ import java.nio.file.Path;
 
 import org.junit.Test;
 
+import ch.fetm.backuptools.common.tools.FileInputStreamDeleteAfterClose;
+
 public class FileInputStreamDeleteAfterCloseTest {
 	@Test
 	public void test() {

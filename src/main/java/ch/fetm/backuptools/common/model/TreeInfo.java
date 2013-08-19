@@ -1,4 +1,3 @@
-package ch.fetm.backuptools.common;
 /*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
  * 
  *    This file is part of backuptools.
@@ -17,38 +16,17 @@ package ch.fetm.backuptools.common;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+package ch.fetm.backuptools.common.model;
 
-public class FileInputStreamDeleteAfterClose extends InputStream {
-	FileInputStream file;
-	Path filepath;
+public class TreeInfo {
+	public static String TYPE_TREE = "tree";
+	public static String TYPE_BLOB = "blob";
+	public String SHA;
+	public String type;
+	public String name;
 	
 	@Override
-	public int read() throws IOException {
-		return file.read();
+	public String toString() {
+		return name;
 	}
-	
-	public FileInputStreamDeleteAfterClose(Path file){
-		
-		this.filepath = file;
-		
-		try {
-			this.file = new FileInputStream(file.toFile());
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Override
-	public void close() throws IOException {
-		super.close();
-		Files.delete(filepath);
-	}
-
 }
