@@ -18,7 +18,6 @@
 
 package ch.fetm.backuptools.common;
 
-import java.nio.file.Paths;
 import java.util.List;
 
 import ch.fetm.backuptools.common.datanode.NodeDirectoryDatabase;
