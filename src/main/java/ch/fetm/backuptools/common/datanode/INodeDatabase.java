@@ -27,8 +27,6 @@ import ch.fetm.backuptools.common.model.BlobList;
 
 public interface INodeDatabase {
 	
-	public abstract BlobList getBlobList();
-	
 	public abstract void addLineToIndexFiles(String line);
 
 	public abstract String sendStringBuffer(StringBuffer sb);

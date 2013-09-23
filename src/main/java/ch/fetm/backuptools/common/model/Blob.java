@@ -32,4 +32,8 @@ public class Blob{
 	public String getName() {
 		return _name;
 	}
+
+	public String getSHA() {
+		return getName();
+	}
 }

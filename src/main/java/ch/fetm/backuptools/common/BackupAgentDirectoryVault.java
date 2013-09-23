@@ -58,8 +58,8 @@ public class BackupAgentDirectoryVault {
 		return agent.getListBackups();
 	}
 
-	public void restore(Tree backup, String restore_path) {
-		agent.restore(backup,restore_path);
+	public void restore(List<TreeInfo> trees, String restore_path) {
+		agent.restore(trees,restore_path);
 	}
 	public Tree getTreeInfosOf(String sha) {
 		return agent.getTreeInfosOf(sha);
@@ -67,9 +67,5 @@ public class BackupAgentDirectoryVault {
 
 	public BackupAgentConfig getConfiguration() {
 		return config;
-	}
-
-	public void restore(TreeInfo tree, String restore_path) {
-		agent.restore(tree, restore_path);
 	}
 }

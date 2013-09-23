@@ -95,14 +95,11 @@ public class BackupAgent {
 	public void setDatabase(INodeDatabase data) {
 		this._node_database = data;
 	}
-	public void restore(TreeInfo treeinfo, String restore_path){
-		restore(getTreeInfosOf(treeinfo.SHA),restore_path);		
-	}
-	public void restore(Tree tree, String restore_path) {
+	
+	public void restore(List<TreeInfo> trees, String restore_path) {
 		Path path = Paths.get(restore_path);
-		List<TreeInfo> listTreeInfos = tree.getAllTreeInfo();
 		
-		for(TreeInfo ti : listTreeInfos){
+		for(TreeInfo ti : trees){
 			if(ti.type.equals(TreeInfo.TYPE_BLOB)){
 				InputStream inputstream = _node_database.createInputStreamFromNodeName(ti.SHA);
 				try {
@@ -114,12 +111,12 @@ public class BackupAgent {
 			if(ti.type.equals(TreeInfo.TYPE_TREE)){
 				Path treePath = Paths.get(path.toAbsolutePath()+FileSystems.getDefault().getSeparator()+ti.name);
 				if(!treePath.toFile().exists()){
-				try {
-				  Files.createDirectory(treePath);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-					restore(getTreeInfosOf(ti.SHA),treePath.toAbsolutePath().toString());
+					try {
+					  Files.createDirectory(treePath);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					restore(getTreeInfosOf(ti.SHA).getAllTreeInfo(),treePath.toAbsolutePath().toString());
 				}
 				
 			}	

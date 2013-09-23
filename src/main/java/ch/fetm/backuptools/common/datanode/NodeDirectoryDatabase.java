@@ -18,7 +18,7 @@
 
 package ch.fetm.backuptools.common.datanode;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,21 +30,26 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.AclFileAttributeView;
+import java.security.acl.AclEntry;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import ch.fetm.backuptools.common.model.Blob;
-import ch.fetm.backuptools.common.model.BlobList;
 import ch.fetm.backuptools.common.tools.SHA1;
 import ch.fetm.backuptools.common.tools.SHA1Signature;
 
 public class NodeDirectoryDatabase implements INodeDatabase {
 
-	private BlobList blobs;
+	private static String BLOBS_DIRECTORY = "blobs";
+	private static String TREES_DIRECTORY = "trees";
+	
+	private static int LAST_DIRECTORY_SUBSTRING_BEGIN_INDEX = 0;
+	private static int LAST_DIRECTORY_SUBSTRING_END_INDEX   = 2;
+	
 	private Path _vault_location;
 	
-	private String getBlobIndexName() {
-		return _vault_location+FileSystems.getDefault().getSeparator()+"blob.txt";
-	}
-
 	public NodeDirectoryDatabase(Path vault_location) {
 		setVaultLocation(vault_location);
 	}
@@ -84,15 +89,41 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 	public String sendStringBuffer(StringBuffer sb) {
 		SHA1 sha = new SHA1();
 		SHA1Signature sign = sha.SHA1SignStringBuffer(sb);
-		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+sign.toString());
-		if(! Files.exists(file)) {
-			try {
-				Files.copy(new ByteArrayInputStream(sb.toString().getBytes()), file);
-			} catch (IOException e) {
-				e.printStackTrace();
+
+		Path finaldir;
+		try {
+			finaldir = buildFinalDirectory(TREES_DIRECTORY,sign.toString());
+			Path file = Paths.get(finaldir+FileSystems.getDefault().getSeparator()+sign.toString());
+			
+			if(! Files.exists(file)) {
+				FileOutputStream out = new FileOutputStream(file.toFile());
+				GZIPOutputStream gzip = new GZIPOutputStream(out);
+				gzip.write(sb.toString().getBytes());
+				gzip.close();
+				out.close();
 			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+
+		
 		return sign.toString();
+	}
+
+	private Path buildFinalDirectory(String subdir, String SHA) throws IOException {
+		String hashdir = SHA.toString().substring( LAST_DIRECTORY_SUBSTRING_BEGIN_INDEX, 
+						                            LAST_DIRECTORY_SUBSTRING_END_INDEX);
+		
+		Path final_path = Paths.get( _vault_location+FileSystems.getDefault().getSeparator()
+									 +subdir
+									 +FileSystems.getDefault().getSeparator()
+									 +hashdir);
+		
+		if(!Files.exists(final_path))
+			Files.createDirectory(final_path);
+		
+		return final_path;
 	}
 
 	/* (non-Javadoc)
@@ -102,19 +133,21 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 	public Blob sendFile(Path file){
 		SHA1 sha  = new SHA1();
 		Blob blob = null;
-	
 		String blobName =sha.SHA1SignFile(file).toString();
-		
-		Path blobfile = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+blobName);
-		if(! Files.exists(blobfile)) {
-			try {
-				Files.copy(file, blobfile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}	
-		blob = new Blob(blobName);
-		blobs.add(blob.getName());
+		Path blobfile;
+		try {
+			blobfile = Paths.get(buildFinalDirectory(BLOBS_DIRECTORY, blobName)+FileSystems.getDefault().getSeparator()+blobName);
+			if(! Files.exists(blobfile)) {
+				FileOutputStream out = new FileOutputStream(blobfile.toFile());
+				GZIPOutputStream gzip = new GZIPOutputStream(out);
+				Files.copy(file, gzip);
+				gzip.close();
+				out.close();
+			}	
+			blob = new Blob(blobName);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		return blob;
 	}
 	
@@ -123,12 +156,29 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 	 */
 	@Override
 	public InputStream createInputStreamFromNodeName(String signature){
-		Path file = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+signature);
+		File file = null;
+		Path finaldir_blob;
+		Path finaldir_tree;
+		
 		try {
-			return new FileInputStream(file.toFile());
-		} catch (FileNotFoundException e) {
-			return null;
+			finaldir_blob = Paths.get(buildFinalDirectory(BLOBS_DIRECTORY, signature)+FileSystems.getDefault().getSeparator()+signature);
+			finaldir_tree = Paths.get(buildFinalDirectory(TREES_DIRECTORY, signature)+FileSystems.getDefault().getSeparator()+signature);
+		
+			if(Files.exists(finaldir_blob)){
+				file = finaldir_blob.toFile();
+			}
+			if(Files.exists(finaldir_tree)){
+				file = finaldir_tree.toFile();
+			} else{
+				return null;
+			}
+			
+			return new GZIPInputStream(new FileInputStream(file));
+			
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -154,24 +204,21 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 
 	public void setVaultLocation(Path databaseLocation) {
 		_vault_location = databaseLocation;
+
 		if(!isFSInitialized())
 			initFS();
-		blobs = new BlobList(Paths.get(getBlobIndexName()));
-	}
-
-	@Override
-	public BlobList getBlobList() {
-		return blobs;
 	}
 
 	@Override
 	public void initFS() {
 		Path indexbackup = Paths.get(getIndexFileName());
-		Path indexblobs  = Paths.get(getBlobIndexName());
-		
+		Path blob_location = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+BLOBS_DIRECTORY);
+		Path tree_location = Paths.get(_vault_location+FileSystems.getDefault().getSeparator()+TREES_DIRECTORY);
+
 		try {
 			Files.createFile(indexbackup);
-			Files.createFile(indexblobs);
+			Files.createDirectories(blob_location);
+			Files.createDirectories(tree_location);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -18,7 +18,7 @@ public final class Bckcmd {
 				String dest   = args[3];
 				if(args.length == 4){System.exit(-1);};
 				backupDirectoryToVault(source, dest);
-			}	
+			}
 		} catch (Exception e) {
 			printHelp();
 		}
