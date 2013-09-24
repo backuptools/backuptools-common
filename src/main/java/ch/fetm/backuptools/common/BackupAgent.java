@@ -34,8 +34,9 @@ import ch.fetm.backuptools.common.model.Tree;
 import ch.fetm.backuptools.common.model.TreeInfo;
 import ch.fetm.backuptools.common.tools.SHA1;
 
-public class BackupAgent {
+public class BackupAgent implements IBackupAgent {
 	private INodeDatabase   _node_database    = null;
+	private Path _source_directory;
 	
 	private Tree pushDirectory(Path file)
 	{
@@ -63,9 +64,11 @@ public class BackupAgent {
 
 	}
 
-	public BackupAgent(INodeDatabase nodeDatabase) {
-		_node_database = nodeDatabase;
+	public BackupAgent(Path source_path, INodeDatabase vault) {
+		_node_database = vault;
+		_source_directory = source_path;
 	}
+
 	public void backupDirectory(Path path){
 		SHA1 sha = new SHA1();
 		String signature;
@@ -74,6 +77,11 @@ public class BackupAgent {
 		signature = _node_database.sendStringBuffer(root.buildData());
 		_node_database.addLineToIndexFiles(Calendar.getInstance().getTime().toString()+"\t"+signature+"\n");
 	}
+	
+	/* (non-Javadoc)
+	 * @see ch.fetm.backuptools.common.IBackupAgent#getListBackups()
+	 */
+	@Override
 	public List<Backup> getListBackups() {
 		List<Backup> backups = new ArrayList<Backup>();
 		BufferedReader reader = new BufferedReader(_node_database.createInputStreamFromIndex());
@@ -92,10 +100,19 @@ public class BackupAgent {
 		}	
 		return backups;
 	}
+	
+	/* (non-Javadoc)
+	 * @see ch.fetm.backuptools.common.IBackupAgent#setDatabase(ch.fetm.backuptools.common.datanode.INodeDatabase)
+	 */
+	@Override
 	public void setDatabase(INodeDatabase data) {
 		this._node_database = data;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ch.fetm.backuptools.common.IBackupAgent#restore(java.util.List, java.lang.String)
+	 */
+	@Override
 	public void restore(List<TreeInfo> trees, String restore_path) {
 		Path path = Paths.get(restore_path);
 		
@@ -126,8 +143,17 @@ public class BackupAgent {
 		
 
 	}
+	/* (non-Javadoc)
+	 * @see ch.fetm.backuptools.common.IBackupAgent#getTreeInfosOf(java.lang.String)
+	 */
+	@Override
 	public Tree getTreeInfosOf(String sha) {
 		Tree tree = new Tree(this._node_database.createInputStreamFromNodeName(sha));
 		return tree;
+	}
+
+	@Override
+	public void doBackup() {
+		backupDirectory(_source_directory);
 	}
 }

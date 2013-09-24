@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import ch.fetm.backuptools.common.BackupAgent;
+import ch.fetm.backuptools.common.BackupAgentConfig;
+import ch.fetm.backuptools.common.IBackupAgent;
 import ch.fetm.backuptools.common.datanode.NodeDirectoryDatabase;
 
 public final class Bckcmd {
@@ -40,10 +42,11 @@ public final class Bckcmd {
 		if(pSource.toFile().exists()){
 			System.exit(-1);
 		}
-		
-		ndb.setVaultLocation(pDest);
-		BackupAgent ba = new BackupAgent(ndb);
-		ba.backupDirectory(pSource);
+		BackupAgentConfig config = new BackupAgentConfig();
+		config.setSource_path(Paths.get(source));
+		config.setVault_path(Paths.get(dest));
+		IBackupAgent ba = BackupAgentFactory.create(config);
+		ba.doBackup();
 	}
 
 }
