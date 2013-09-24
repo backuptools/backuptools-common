@@ -166,10 +166,9 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 		
 			if(Files.exists(finaldir_blob)){
 				file = finaldir_blob.toFile();
-			}
-			if(Files.exists(finaldir_tree)){
+			} else if(Files.exists(finaldir_tree)){
 				file = finaldir_tree.toFile();
-			} else{
+			}else{
 				return null;
 			}
 			

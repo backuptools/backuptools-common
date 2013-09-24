@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 
 import ch.fetm.backuptools.common.BackupAgent;
 import ch.fetm.backuptools.common.BackupAgentConfig;
+import ch.fetm.backuptools.common.BackupAgentFactory;
 import ch.fetm.backuptools.common.IBackupAgent;
 import ch.fetm.backuptools.common.datanode.NodeDirectoryDatabase;
 
@@ -45,6 +46,7 @@ public final class Bckcmd {
 		BackupAgentConfig config = new BackupAgentConfig();
 		config.setSource_path(Paths.get(source));
 		config.setVault_path(Paths.get(dest));
+
 		IBackupAgent ba = BackupAgentFactory.create(config);
 		ba.doBackup();
 	}
