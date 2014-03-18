@@ -18,26 +18,19 @@
 
 package ch.fetm.backuptools.common.datanode;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.nio.file.Path;
+import java.util.List;
 
+import ch.fetm.backuptools.common.model.Backup;
 import ch.fetm.backuptools.common.model.Blob;
-import ch.fetm.backuptools.common.model.BlobList;
+import ch.fetm.backuptools.common.model.Tree;
 
 public interface INodeDatabase {
-	
-	public abstract void addLineToIndexFiles(String line);
-
-	public abstract String sendStringBuffer(StringBuffer sb);
-
-	public abstract Blob sendFile(Path file);
-
-	public abstract InputStream createInputStreamFromNodeName(String signature);
-
-	public abstract Reader createInputStreamFromIndex();
-	
-	public abstract void initFS();
-
-	public abstract boolean isFSInitialized();
+    void sendTree(Tree tree);
+	Blob sendFile(Path file);
+	InputStream createInputStreamFromNodeName(String signature);
+    void sendBackup(Backup backup);
+    List<Backup> getBackups() throws IOException;
 }

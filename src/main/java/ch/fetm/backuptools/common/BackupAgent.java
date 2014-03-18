@@ -59,7 +59,7 @@ public class BackupAgent implements IBackupAgent {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		_node_database.sendStringBuffer(tree.buildData());
+		_node_database.sendTree(tree);
 		return tree;
 
 	}
@@ -70,12 +70,11 @@ public class BackupAgent implements IBackupAgent {
 	}
 
 	public void backupDirectory(Path path){
-		SHA1 sha = new SHA1();
-		String signature;
 		Tree   root   = null;
 		root = pushDirectory(path);
-		signature = _node_database.sendStringBuffer(root.buildData());
-		_node_database.addLineToIndexFiles(Calendar.getInstance().getTime().toString()+"\t"+signature+"\n");
+		_node_database.sendTree(root);
+        Backup backup = new Backup(Calendar.getInstance().getTime().toString(), root.getName());
+		_node_database.sendBackup(backup);
 	}
 	
 	/* (non-Javadoc)
@@ -83,22 +82,13 @@ public class BackupAgent implements IBackupAgent {
 	 */
 	@Override
 	public List<Backup> getListBackups() {
-		List<Backup> backups = new ArrayList<Backup>();
-		BufferedReader reader = new BufferedReader(_node_database.createInputStreamFromIndex());
-		String line="";
-		Backup backup = null;
-		try {
-			do{
-				line = reader.readLine();
-				if(line != null){
-					StringTokenizer token  = new StringTokenizer(line,"\t");	
-					backup = new Backup(token.nextToken(),token.nextToken());
-					backups.add(backup);
-				}
-			}while(line != null);
-		} catch (IOException e) {
-		}	
-		return backups;
+        List<Backup> backups = null;
+        try {
+            backups = _node_database.getBackups();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return backups;
 	}
 	
 	/* (non-Javadoc)

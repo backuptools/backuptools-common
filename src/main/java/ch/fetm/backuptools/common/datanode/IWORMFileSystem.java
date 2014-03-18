@@ -1,7 +1,8 @@
-/*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
- * 
+
+/*	Copyright 2014 Florian Mahon <florian@faivre-et-mahon.ch>
+ *
  *    This file is part of backuptools.
- *    
+ *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation, either version 3 of the License, or
@@ -16,28 +17,18 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common.tools;
+package ch.fetm.backuptools.common.datanode;
 
-public class SHA1Signature {
-	private byte[] md;
-	
-	public SHA1Signature(byte[] digest) {
-		md = digest;
-	}
-
-	
-	public StringBuffer getStringBuffer() {
-		
-		StringBuffer sb = new StringBuffer("");
-	
-		for(int i =0; i<md.length; i++){
-			sb.append(Integer.toString((md[i]&0xff)+ 0x100,16).substring(1));
-		}
-		return sb;
-	}
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 
-	public String toString(){
-		return getStringBuffer().toString();
-	}
+interface IWORMFileSystem {
+    void writeFile(String fullname, InputStream inputStream) throws IOException;
+    void deleteFile(String fullname) throws IOException;
+    InputStream readFile(String fullname) throws FileNotFoundException;
+    Boolean fileExist(String fullname);
+    List<String> getListFiles(String directory) throws IOException;
 }

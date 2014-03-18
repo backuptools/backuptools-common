@@ -16,19 +16,19 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common;
+package ch.fetm.backuptools.common.datanode;
 
 import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import ch.fetm.backuptools.common.TestUtilities;
+import ch.fetm.backuptools.common.datanode.WORMFileSystem;
+import ch.fetm.backuptools.common.model.Tree;
+import ch.fetm.backuptools.common.model.TreeInfo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,10 +43,9 @@ public class NodeDirectoryDatabaseTest {
 	
 	@Before
 	public void setup(){
-		
 		db_location = TestUtilities.createTemporyFile();
-		
-		database = new NodeDirectoryDatabase(db_location);
+		WORMFileSystem fs = new WORMFileSystem(db_location);
+		database = new NodeDirectoryDatabase(fs);
 	}
 
 
@@ -55,23 +54,27 @@ public class NodeDirectoryDatabaseTest {
 	public void tearDown(){
 		
 	}
-	
+    @Test
+    public void sendBackup(){
+        assertTrue(false);
+    }
 	@Test
-	public void addLinetoIndexFile_createInputStream(){
-		String line = "Line 1 test";
-		BufferedReader input;
+    public void sendTree(){
+        Tree tree = new Tree();
+        TreeInfo treeInfo = new TreeInfo();
+        treeInfo.name = "name";
+        treeInfo.SHA  = "SHA123123";
+        treeInfo.type = TreeInfo.TYPE_BLOB;
 
-		database.addLineToIndexFiles(line);
-		input = new BufferedReader(database.createInputStreamFromIndex());
-		
-		try {
-			assertEquals(line, input.readLine());
-		} catch (IOException e) {
-			e.printStackTrace();
-			assertFalse(true);
-		}
-	}
-	
+        tree.addTreeInfo(treeInfo);
+
+        database.sendTree(tree);
+
+        String name = tree.getName();
+        InputStream inputStream = database.createInputStreamFromNodeName(name);
+        Tree tree1 = new Tree(inputStream);
+        assertTrue(tree.getName().equals(tree1.getName()));
+    }
 	@Test
 	public void sendFile_createInputStreamFromNodeName(){
 		SHA1 sha = new SHA1();
@@ -103,25 +106,6 @@ public class NodeDirectoryDatabaseTest {
 		}
 		
 
-	}
-
-	@Test
-	public void sendStringBuffer(){
-		SHA1 sha = new SHA1();
-		String filecontents = "Hello world and I test you";
-		StringBuffer sb     = new StringBuffer(filecontents);
-		
-		String blobname = sha.SHA1SignStringBuffer(sb).toString();			
-		
-		database.sendStringBuffer(sb);
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(database.createInputStreamFromNodeName(blobname)));
-		
-		try {
-			assertEquals(filecontents, in.readLine());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
 	}
 
 }

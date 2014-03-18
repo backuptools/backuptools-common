@@ -20,11 +20,13 @@ package ch.fetm.backuptools.common;
 
 import ch.fetm.backuptools.common.datanode.INodeDatabase;
 import ch.fetm.backuptools.common.datanode.NodeDirectoryDatabase;
+import ch.fetm.backuptools.common.datanode.WORMFileSystem;
 
 public class BackupAgentFactory {
 
 	public static IBackupAgent create(BackupAgentConfig config) {
-		INodeDatabase db = new NodeDirectoryDatabase(config.getVault_path());
+        WORMFileSystem fs = new WORMFileSystem(config.getVault_path().toAbsolutePath().toString());
+		INodeDatabase db = new NodeDirectoryDatabase(fs);
 		IBackupAgent agent = new BackupAgent(config.getSource_path(),db);
 		return agent;
 	}

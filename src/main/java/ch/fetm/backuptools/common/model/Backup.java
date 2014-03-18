@@ -19,6 +19,11 @@
 package ch.fetm.backuptools.common.model;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 public class Backup {
 	private String date;
 	private String sha_root_tree;
@@ -29,6 +34,12 @@ public class Backup {
 		sha_root_tree = sha1;
 	}
 
+    public Backup(InputStream is) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        date =  reader.readLine();
+        sha_root_tree = reader.readLine();
+    }
+
 	public String getDate(){
 		return date;
 	}
@@ -36,4 +47,11 @@ public class Backup {
 	public String getName(){
 		return sha_root_tree;
 	}
+
+    public StringBuffer buildData() {
+        StringBuffer out  = new StringBuffer();
+        out.append(date+"\n");
+        out.append(sha_root_tree + "\n");
+        return out;
+    }
 }
