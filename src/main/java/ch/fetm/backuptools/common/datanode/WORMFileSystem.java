@@ -19,10 +19,9 @@
 package ch.fetm.backuptools.common.datanode;
 
 import java.io.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 
@@ -77,5 +76,17 @@ public class WORMFileSystem implements IWORMFileSystem{
         String newname = convertNameToFsStyle(fullname);
         Path file = Paths.get(location.toString()+FileSystems.getDefault().getSeparator()+newname);
         return file.toFile().exists();
+    }
+
+    @Override
+    public List<String> getListFiles(String directory) throws IOException {
+        List<String> list = new ArrayList<>();
+        String newpath = convertNameToFsStyle(directory);
+        DirectoryStream<Path> directories = Files.newDirectoryStream(Paths.get(location.toString() + FileSystems.getDefault().getSeparator() + newpath));
+
+        for(Path file : directories){
+            list.add(DIRECTORY_SEPARATOR+directory+DIRECTORY_SEPARATOR+file.getFileName());
+        }
+        return list;
     }
 }

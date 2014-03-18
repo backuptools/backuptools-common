@@ -20,17 +20,15 @@ package ch.fetm.backuptools.common.datanode;
 
 import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import ch.fetm.backuptools.common.TestUtilities;
 import ch.fetm.backuptools.common.datanode.WORMFileSystem;
+import ch.fetm.backuptools.common.model.Tree;
+import ch.fetm.backuptools.common.model.TreeInfo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +43,6 @@ public class NodeDirectoryDatabaseTest {
 	
 	@Before
 	public void setup(){
-		
 		db_location = TestUtilities.createTemporyFile();
 		WORMFileSystem fs = new WORMFileSystem(db_location);
 		database = new NodeDirectoryDatabase(fs);
@@ -57,7 +54,27 @@ public class NodeDirectoryDatabaseTest {
 	public void tearDown(){
 		
 	}
-	
+    @Test
+    public void sendBackup(){
+        assertTrue(false);
+    }
+	@Test
+    public void sendTree(){
+        Tree tree = new Tree();
+        TreeInfo treeInfo = new TreeInfo();
+        treeInfo.name = "name";
+        treeInfo.SHA  = "SHA123123";
+        treeInfo.type = TreeInfo.TYPE_BLOB;
+
+        tree.addTreeInfo(treeInfo);
+
+        database.sendTree(tree);
+
+        String name = tree.getName();
+        InputStream inputStream = database.createInputStreamFromNodeName(name);
+        Tree tree1 = new Tree(inputStream);
+        assertTrue(tree.getName().equals(tree1.getName()));
+    }
 	@Test
 	public void sendFile_createInputStreamFromNodeName(){
 		SHA1 sha = new SHA1();

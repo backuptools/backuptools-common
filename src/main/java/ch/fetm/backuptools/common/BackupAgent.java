@@ -82,9 +82,13 @@ public class BackupAgent implements IBackupAgent {
 	 */
 	@Override
 	public List<Backup> getListBackups() {
-		List<Backup> backups = new ArrayList<Backup>();
-        //TODO A faire encore
-		return null;
+        List<Backup> backups = null;
+        try {
+            backups = _node_database.getBackups();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return backups;
 	}
 	
 	/* (non-Javadoc)

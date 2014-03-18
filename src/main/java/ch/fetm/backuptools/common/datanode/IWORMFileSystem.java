@@ -22,6 +22,7 @@ package ch.fetm.backuptools.common.datanode;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 
 interface IWORMFileSystem {
@@ -29,4 +30,5 @@ interface IWORMFileSystem {
     void deleteFile(String fullname) throws IOException;
     InputStream readFile(String fullname) throws FileNotFoundException;
     Boolean fileExist(String fullname);
+    List<String> getListFiles(String directory) throws IOException;
 }

@@ -8,8 +8,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WORMFileSystemTest {
     IWORMFileSystem worm;
@@ -44,6 +47,32 @@ public class WORMFileSystemTest {
         assertTrue(signature_1.toString().equals(signature_2.toString()));
         assertFalse(signature_1.toString().equals(sha.SHA1SignStringBuffer(new StringBuffer()).toString()));
 
+    }
+    @Test
+    public void testListFilesInDirectory(){
+        StringBuffer sb = new StringBuffer();
+        List<String> listfiles = new ArrayList<>();
+        sb.append("test");
+        int nbFile = 10;
+        String dir = "directory";
+        for(int cpt = 0; cpt < nbFile; cpt++){
+            InputStream in = new ByteArrayInputStream(sb.toString().getBytes());
+            try {
+                String name = dir+WORMFileSystem.DIRECTORY_SEPARATOR+"file"+cpt;
+                listfiles.add(name);
+                worm.writeFile(name,in);
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        List<String> list = null;
+        try {
+            list = worm.getListFiles(dir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertEquals(list.size(), nbFile);
     }
 
     @Test

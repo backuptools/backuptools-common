@@ -21,6 +21,8 @@ package ch.fetm.backuptools.common.datanode;
 import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import ch.fetm.backuptools.common.model.Backup;
 import ch.fetm.backuptools.common.model.Blob;
@@ -53,7 +55,7 @@ public class NodeDirectoryDatabase implements INodeDatabase {
             fullPath = createFullPath(location, sign.toString());
             String fullPathName = fullPath+"/"+sign.toString();
 
-            if(fileSystem.fileExist(fullPathName)) {
+            if(!fileSystem.fileExist(fullPathName)) {
                 fileSystem.writeFile(fullPathName, input);
             }
         } catch (IOException e1) {
@@ -132,5 +134,20 @@ public class NodeDirectoryDatabase implements INodeDatabase {
     public void sendBackup(Backup backup) {
         StringBuffer stringBuffer = backup.buildData();
         sendStringBuffer(BACKUP_DIRECTORY, stringBuffer);
+    }
+
+    @Override
+    public List<Backup> getBackups() throws IOException {
+        List<Backup> backups = new ArrayList<>();
+        List<String> listDirectories = fileSystem.getListFiles("/backups");
+        for(String directory : listDirectories){
+            List<String> files = fileSystem.getListFiles(directory);
+            for(String file : files){
+                InputStream in = fileSystem.readFile(file);
+                backups.add(new Backup(in));
+                in.close();
+            }
+        }
+        return backups;
     }
 }
