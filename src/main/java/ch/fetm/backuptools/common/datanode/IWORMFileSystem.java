@@ -1,7 +1,8 @@
-/*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
- * 
+
+/*	Copyright 2014 Florian Mahon <florian@faivre-et-mahon.ch>
+ *
  *    This file is part of backuptools.
- *    
+ *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation, either version 3 of the License, or
@@ -18,18 +19,14 @@
 
 package ch.fetm.backuptools.common.datanode;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.nio.file.Path;
 
-import ch.fetm.backuptools.common.model.Backup;
-import ch.fetm.backuptools.common.model.Blob;
-import ch.fetm.backuptools.common.model.BlobList;
-import ch.fetm.backuptools.common.model.Tree;
 
-public interface INodeDatabase {
-    void sendTree(Tree tree);
-	Blob sendFile(Path file);
-	InputStream createInputStreamFromNodeName(String signature);
-    void sendBackup(Backup backup);
+interface IWORMFileSystem {
+    void writeFile(String fullname, InputStream inputStream) throws IOException;
+    void deleteFile(String fullname) throws IOException;
+    InputStream readFile(String fullname) throws FileNotFoundException;
+    Boolean fileExist(String fullname);
 }

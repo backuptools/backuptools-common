@@ -16,7 +16,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.fetm.backuptools.common;
+package ch.fetm.backuptools.common.datanode;
 
 import static org.junit.Assert.*;
 
@@ -29,6 +29,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import ch.fetm.backuptools.common.TestUtilities;
+import ch.fetm.backuptools.common.datanode.WORMFileSystem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,8 +47,8 @@ public class NodeDirectoryDatabaseTest {
 	public void setup(){
 		
 		db_location = TestUtilities.createTemporyFile();
-		
-		database = new NodeDirectoryDatabase(db_location);
+		WORMFileSystem fs = new WORMFileSystem(db_location);
+		database = new NodeDirectoryDatabase(fs);
 	}
 
 
@@ -54,22 +56,6 @@ public class NodeDirectoryDatabaseTest {
 	@After
 	public void tearDown(){
 		
-	}
-	
-	@Test
-	public void addLinetoIndexFile_createInputStream(){
-		String line = "Line 1 test";
-		BufferedReader input;
-
-		database.addLineToIndexFiles(line);
-		input = new BufferedReader(database.createInputStreamFromIndex());
-		
-		try {
-			assertEquals(line, input.readLine());
-		} catch (IOException e) {
-			e.printStackTrace();
-			assertFalse(true);
-		}
 	}
 	
 	@Test
@@ -103,25 +89,6 @@ public class NodeDirectoryDatabaseTest {
 		}
 		
 
-	}
-
-	@Test
-	public void sendStringBuffer(){
-		SHA1 sha = new SHA1();
-		String filecontents = "Hello world and I test you";
-		StringBuffer sb     = new StringBuffer(filecontents);
-		
-		String blobname = sha.SHA1SignStringBuffer(sb).toString();			
-		
-		database.sendStringBuffer(sb);
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(database.createInputStreamFromNodeName(blobname)));
-		
-		try {
-			assertEquals(filecontents, in.readLine());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
 	}
 
 }
