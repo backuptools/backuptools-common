@@ -1,81 +1,80 @@
-/*	Copyright 2013,2014 Florian Mahon <florian@faivre-et-mahon.ch>
- * 
- *    This file is part of backuptools.
- *    
- *    This program is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
- *
- *    You should have received a copy of the GNU General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/******************************************************************************
+ * Copyright (c) 2014. Florian Mahon <florian@faivre-et-mahon.ch>             *
+ *                                                                            *
+ * This file is part of backuptools.                                          *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * any later version.                                                         *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful, but        *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of                 *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU           *
+ * General Public License for more details. You should have received a        *
+ * copy of the GNU General Public License along with this program.            *
+ * If not, see <http://www.gnu.org/licenses/>.                                *
+ ******************************************************************************/
 
 package ch.fetm.backuptools.common.datanode;
-
-import java.io.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import ch.fetm.backuptools.common.model.Backup;
 import ch.fetm.backuptools.common.model.Blob;
 import ch.fetm.backuptools.common.model.Tree;
 import ch.fetm.backuptools.common.tools.SHA1;
-import ch.fetm.backuptools.common.tools.SHA1Signature;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NodeDirectoryDatabase implements INodeDatabase {
-
-    IWORMFileSystem fileSystem;
 
 	private static String BLOBS_DIRECTORY = "blobs";
 	private static String TREES_DIRECTORY = "trees";
     private static String BACKUP_DIRECTORY = "backups";
-
 	private static int LAST_DIRECTORY_SUBSTRING_BEGIN_INDEX = 0;
 	private static int LAST_DIRECTORY_SUBSTRING_END_INDEX   = 2;
+    IWORMFileSystem fileSystem;
 
     public NodeDirectoryDatabase(WORMFileSystem fs) {
         fileSystem = fs;
     }
 
+    public NodeDirectoryDatabase() {
+    }
+
     private String sendStringBuffer(String location, StringBuffer sb) {
-        SHA1 sha = new SHA1();
-        SHA1Signature sign = sha.SHA1SignStringBuffer(sb);
+        String sign = SHA1.SHA1SignStringBuffer(sb);
         InputStream input = new ByteArrayInputStream(sb.toString().getBytes());
 
         String fullPath;
         try {
-            fullPath = createFullPath(location, sign.toString());
-            String fullPathName = fullPath+"/"+sign.toString();
+            fullPath = createFullPath(location, sign);
+            String fullPathName = fullPath + "/" + sign;
 
-            if(!fileSystem.fileExist(fullPathName)) {
+            if (!fileSystem.fileExist(fullPathName)) {
                 fileSystem.writeFile(fullPathName, input);
             }
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        return sign.toString();
+        return sign;
     }
 
-	private String createFullPath(String subdir, String SHA) throws IOException {
-		String hashdir;
+    private String createFullPath(String subdir, String SHA) throws IOException {
+        String hashdir;
         hashdir = SHA.substring(LAST_DIRECTORY_SUBSTRING_BEGIN_INDEX,
-                    LAST_DIRECTORY_SUBSTRING_END_INDEX);
+                LAST_DIRECTORY_SUBSTRING_END_INDEX);
 
         return FileSystems.getDefault().getSeparator()
-                                     +subdir
-                                     +FileSystems.getDefault().getSeparator()
-                                     +hashdir;
-	}
-
-    public NodeDirectoryDatabase() {
+                + subdir
+                + FileSystems.getDefault().getSeparator()
+                + hashdir;
     }
 
     @Override
@@ -86,11 +85,10 @@ public class NodeDirectoryDatabase implements INodeDatabase {
 
     @Override
 	public Blob sendFile(Path file){
-		SHA1 sha  = new SHA1();
 		Blob blob = null;
-		String blobName = sha.SHA1SignFile(file).toString();
-		String blobFullPath;
-		try {
+        String blobName = SHA1.SHA1SignFile(file);
+        String blobFullPath;
+        try {
             InputStream inputStream = new FileInputStream(file.toFile());
             blobFullPath = createFullPath(BLOBS_DIRECTORY, blobName)+FileSystems.getDefault().getSeparator()+blobName;
 			if(! fileSystem.fileExist(blobFullPath)){
