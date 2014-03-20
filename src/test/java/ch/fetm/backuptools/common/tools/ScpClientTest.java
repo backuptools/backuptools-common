@@ -37,8 +37,8 @@ public class ScpClientTest {
 	private String host = "localhost";
 	private String pass = "test";
 
-	private String localname = "/home/florian/index.txt";
-	private String remotename = "/home/test/index.txt" ;
+	private String localname = "/Users/Admin/index.txt";
+	private String remotename = "/Users/test/index.txt" ;
 	
 	@Before
 	public void Setup() {

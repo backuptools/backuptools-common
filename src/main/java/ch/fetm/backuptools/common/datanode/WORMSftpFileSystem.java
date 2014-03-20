@@ -34,6 +34,7 @@ public class WORMSftpFileSystem implements IWORMFileSystem{
     private String directoryLocation;
     private static String FOLDERSEPARATOR = "/";
 
+
     public WORMSftpFileSystem(ScpClient scpClient, String directoryLocation){
         this.scpClient = scpClient;
         this.directoryLocation = directoryLocation;
@@ -46,6 +47,10 @@ public class WORMSftpFileSystem implements IWORMFileSystem{
 
     @Override
     public void writeFile(String fullname, InputStream inputStream) throws IOException {
+       // Check si le repertoire exit
+        if (!scpClient.isExist(directoryLocation)){
+            scpClient.CreatFolderTree(fullNameComposer(fullname));
+        }
         scpClient.put(fullNameComposer(fullname), inputStream);
     }
 

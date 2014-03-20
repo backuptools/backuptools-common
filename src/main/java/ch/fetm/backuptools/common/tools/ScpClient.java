@@ -22,6 +22,7 @@ import com.jcraft.jsch.*;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class ScpClient {
 	private Session session;
@@ -143,4 +144,34 @@ public class ScpClient {
         }
         return result;
     }
+    public void CreatFolderTree(String directory) {
+        connect();
+        StringTokenizer tokenizer = new StringTokenizer(directory, "/");
+        String currentDir = null;
+        try {
+            currentDir = sftp.pwd();
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+        while (tokenizer.hasMoreTokens()){
+            String currentToken = tokenizer.nextToken();
+            try {
+                if(!isExist(currentToken))
+                    sftp.mkdir(currentToken);
+            } catch (SftpException e) {
+                e.printStackTrace();
+            }
+            try {
+                sftp.cd(currentToken);
+            } catch (SftpException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            sftp.cd(currentDir);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
