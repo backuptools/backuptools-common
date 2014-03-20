@@ -21,24 +21,36 @@ package ch.fetm.backuptools.common.tools;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 
 
 public class SHA1Test {
-	@Test
-	public void testSignature() {
+    @Test
+    public void SHA1SignInputStream() {
         String signature = null;
 
-		try {
+        try {
             InputStream f = getClass().getClassLoader().getResourceAsStream("file.txt");
             signature = SHA1.SHA1SignInputStream(f);
         } catch (Exception e) {
             e.printStackTrace();
-		}
+        }
 
 
         assertEquals(signature, "f874afa73be7027485fd3e99e6e729c38ba9aeee");
     }
 
+    @Test
+    public void SHA1SignFile() {
+        try {
+            Path file = Paths.get(getClass().getClassLoader().getResource("file.txt").toURI());
+            String signature = SHA1.SHA1SignFile(file);
+            assertEquals(signature, "f874afa73be7027485fd3e99e6e729c38ba9aeee");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
