@@ -1,33 +1,27 @@
-/*	Copyright 2013 Florian Mahon <florian@faivre-et-mahon.ch>
- * 
- *    This file is part of backuptools.
- *    
- *    This program is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
- *
- *    You should have received a copy of the GNU General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/******************************************************************************
+ * Copyright (c) 2014. Florian Mahon <florian@faivre-et-mahon.ch>             *
+ *                                                                            *
+ * This file is part of backuptools.                                          *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * any later version.                                                         *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful, but        *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of                 *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU           *
+ * General Public License for more details. You should have received a        *
+ * copy of the GNU General Public License along with this program.            *
+ * If not, see <http://www.gnu.org/licenses/>.                                *
+ ******************************************************************************/
 
 package ch.fetm.backuptools.common.tools;
 
-import java.net.ConnectException;
+import com.jcraft.jsch.*;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.HostKey;
-import com.jcraft.jsch.HostKeyRepository;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
-import com.jcraft.jsch.UserInfo;
+import java.io.InputStream;
+import java.util.List;
 
 public class ScpClient {
 	private Session session;
@@ -110,7 +104,16 @@ public class ScpClient {
 		}
 	}
 
-	public void put(String localname, String dest) {
+    public void put(String filename, InputStream in) {
+        connect();
+        try {
+            sftp.put(in, filename);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void put(String localname, String dest) {
 		connect();
 		try {
 			sftp.put(localname, dest);
@@ -119,4 +122,25 @@ public class ScpClient {
 		}
 	}
 
+    public InputStream get(String fullname) {
+        connect();
+        InputStream result = null;
+        try {
+            result = sftp.get(fullname);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public List<String> ls(String path) {
+        connect();
+        List<String> result = null;
+        try {
+            result = sftp.ls(path);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }
