@@ -30,9 +30,9 @@ import java.util.List;
  * Created by florian on 20.03.14.
  */
 public class WORMSftpFileSystem implements IWORMFileSystem{
+    private static String FOLDERSEPARATOR = "/";
     private ScpClient scpClient;
     private String directoryLocation;
-    private static String FOLDERSEPARATOR = "/";
 
 
     public WORMSftpFileSystem(ScpClient scpClient, String directoryLocation){
@@ -49,7 +49,7 @@ public class WORMSftpFileSystem implements IWORMFileSystem{
     public void writeFile(String fullname, InputStream inputStream) throws IOException {
        // Check si le repertoire exit
         if (!scpClient.isExist(directoryLocation)){
-            scpClient.CreatFolderTree(fullNameComposer(fullname));
+            scpClient.createFolderTree(fullNameComposer(fullname));
         }
         scpClient.put(fullNameComposer(fullname), inputStream);
     }

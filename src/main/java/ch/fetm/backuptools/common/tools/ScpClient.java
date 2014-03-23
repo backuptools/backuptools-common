@@ -25,85 +25,85 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class ScpClient {
-	private Session session;
-	private JSch jsch;
-	private String host;
-	private String username;
-	private String password;
-	private ChannelSftp sftp;
-	
-	public ScpClient(String host, String username, String password) {
-		this.host = host;
-		this.username = username;
-		this.password = password;
-		
-		
-		try {
-			jsch = new JSch();
+    private Session session;
+    private JSch jsch;
+    private String host;
+    private String username;
+    private String password;
+    private ChannelSftp sftp;
 
-		    initializeScpConnexion();
-		    
-		    connect();
+    public ScpClient(String host, String username, String password) {
+        this.host = host;
+        this.username = username;
+        this.password = password;
 
-		} catch (JSchException e) {
-			e.printStackTrace();
-		}
-		
-	}
 
-	private void connect() { 
-		if(!session.isConnected()){
-			try {
-				session.connect();
-				sftp = (ChannelSftp) session.openChannel("sftp");
-				if(sftp != null || !sftp.isConnected()){
-					sftp.connect();
-				}
-			} catch (JSchException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        try {
+            jsch = new JSch();
 
-	private void initializeScpConnexion() throws JSchException {
-		session = jsch.getSession(this.username, this.host);
-		session.setPassword(this.password);
-				    
-		java.util.Properties config = new java.util.Properties(); 
-		config.put("StrictHostKeyChecking", "no");
-		session.setConfig(config);
-	}
+            initializeScpConnexion();
 
-	public boolean isExist(String name) {
-		connect();
-		boolean isExist = true;
-		try {
-			sftp.lstat(name);
-		} catch (SftpException e) {
-			isExist = false;
-		}
-		return isExist;
-		
-	}
+            connect();
 
-	public void rmFile(String name) {
-		connect();
-		try {
-			sftp.rm(name);
-		} catch (SftpException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        } catch (JSchException e) {
+            e.printStackTrace();
+        }
 
-	public void get(String src, String dst) {
-		connect();
-		try {
-			sftp.get(src, dst);
-		} catch (SftpException e) {
-			e.printStackTrace();
-		}
-	}
+    }
+
+    private void connect() {
+        if (!session.isConnected()) {
+            try {
+                session.connect();
+                sftp = (ChannelSftp) session.openChannel("sftp");
+                if (sftp != null || !sftp.isConnected()) {
+                    sftp.connect();
+                }
+            } catch (JSchException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void initializeScpConnexion() throws JSchException {
+        session = jsch.getSession(this.username, this.host);
+        session.setPassword(this.password);
+
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        session.setConfig(config);
+    }
+
+    public boolean isExist(String name) {
+        connect();
+        boolean isExist = true;
+        try {
+            sftp.lstat(name);
+        } catch (SftpException e) {
+            isExist = false;
+        }
+        return isExist;
+
+    }
+
+    public void rmFile(String name) {
+        connect();
+        try {
+            sftp.rm(name);
+        } catch (SftpException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void get(String src, String dst) {
+        connect();
+        try {
+            sftp.get(src, dst);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void put(String filename, InputStream in) {
         connect();
@@ -115,13 +115,13 @@ public class ScpClient {
     }
 
     public void put(String localname, String dest) {
-		connect();
-		try {
-			sftp.put(localname, dest);
-		} catch (SftpException e) {
-			e.printStackTrace();
-		}
-	}
+        connect();
+        try {
+            sftp.put(localname, dest);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+    }
 
     public InputStream get(String fullname) {
         connect();
@@ -144,30 +144,30 @@ public class ScpClient {
         }
         return result;
     }
-    public void CreatFolderTree(String directory) {
+
+    public void rmdir(String path) {
+        try {
+            sftp.rm(path);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createFolderTree(String directory) {
         connect();
         StringTokenizer tokenizer = new StringTokenizer(directory, "/");
         String currentDir = null;
         try {
+            if (directory.startsWith("/")) {
+                sftp.cd("/");
+            }
             currentDir = sftp.pwd();
-        } catch (SftpException e) {
-            e.printStackTrace();
-        }
-        while (tokenizer.hasMoreTokens()){
-            String currentToken = tokenizer.nextToken();
-            try {
-                if(!isExist(currentToken))
+            while (tokenizer.hasMoreTokens()) {
+                String currentToken = tokenizer.nextToken();
+                if (!isExist(currentToken))
                     sftp.mkdir(currentToken);
-            } catch (SftpException e) {
-                e.printStackTrace();
-            }
-            try {
                 sftp.cd(currentToken);
-            } catch (SftpException e) {
-                e.printStackTrace();
             }
-        }
-        try {
             sftp.cd(currentDir);
         } catch (SftpException e) {
             e.printStackTrace();
