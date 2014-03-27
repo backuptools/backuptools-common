@@ -18,24 +18,28 @@
 
 package ch.fetm.backuptools.common.datanode;
 
+import ch.fetm.backuptools.common.FileSystemTools;
 import org.junit.After;
 import org.junit.Before;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 
 public class WORMFileSystemTest extends AWORMFileSystemTest {
-
+    Path path;
     @Override
     @Before
     public void setUp() throws Exception {
+        path = Files.createTempDirectory("worm");
         super.setUp();
-        worm = new WORMFileSystem(Files.createTempDirectory("worm"));
+        worm = new WORMFileSystem(path);
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
+        FileSystemTools.eraseDirectory(path.toString());
     }
 
 }

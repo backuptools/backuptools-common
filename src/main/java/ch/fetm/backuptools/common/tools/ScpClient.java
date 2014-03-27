@@ -23,6 +23,7 @@ import com.jcraft.jsch.*;
 import java.io.InputStream;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class ScpClient {
     private Session session;

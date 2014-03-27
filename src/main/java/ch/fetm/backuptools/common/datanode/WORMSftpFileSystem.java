@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by florian on 20.03.14.
@@ -49,6 +50,17 @@ public class WORMSftpFileSystem implements IWORMFileSystem{
     public void writeFile(String fullname, InputStream inputStream) throws IOException {
        // Check si le repertoire exit
         if (!scpClient.isExist(directoryLocation)){
+            StringTokenizer tokenizer = new StringTokenizer(fullNameComposer(fullname), FOLDERSEPARATOR);
+            String destination ="";
+            char[] test = new char[1];
+            fullname.getChars(0,0,test,1);
+            if ( test.toString().equals(FOLDERSEPARATOR))
+                destination = FOLDERSEPARATOR;
+
+
+            for (int cpt = 0; cpt<tokenizer.countTokens(); cpt++){
+                destination = destination + FOLDERSEPARATOR + tokenizer.nextToken();
+            }
             scpClient.createFolderTree(fullNameComposer(fullname));
         }
         scpClient.put(fullNameComposer(fullname), inputStream);

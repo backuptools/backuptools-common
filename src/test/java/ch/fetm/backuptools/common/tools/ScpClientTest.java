@@ -18,6 +18,7 @@
 
 package ch.fetm.backuptools.common.tools;
 
+import ch.fetm.backuptools.common.FileSystemTools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,9 +36,11 @@ public class ScpClientTest {
     private String host = "localhost";
     private String pass = "test";
 
-    private String localname = "/home/florian/index.txt";
-    private String remotename = "/home/test/index.txt";
-    private String remotedir = "/home/test/mkdir";
+    private String localname =  "/Users/Admin/index.txt";
+
+    private String remotename = "/Users/test/index.txt";
+
+    private String remotedir =  "/Users/test/mkdir";
 
     @Before
     public void Setup() {
@@ -85,32 +88,7 @@ public class ScpClientTest {
 
     @Test
     public void createFolderTree() throws IOException {
-        SimpleFileVisitor<Path> test = new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file,
-                                             BasicFileAttributes attrs) throws IOException {
-
-                System.out.println("Deleting file: " + file);
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir,
-                                                      IOException exc) throws IOException {
-
-                System.out.println("Deleting dir: " + dir);
-                if (exc == null) {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                } else {
-                    throw exc;
-                }
-            }
-        };
-
-        if (Files.exists(Paths.get(remotedir)))
-            Files.walkFileTree(Paths.get(remotedir), test);
+        FileSystemTools.eraseDirectory(remotedir);
 
         assertFalse(sftp.isExist(remotedir));
         sftp.createFolderTree(remotedir);
@@ -123,5 +101,4 @@ public class ScpClientTest {
     public void tearDown() {
 
     }
-
 }

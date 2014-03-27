@@ -18,6 +18,7 @@
 
 package ch.fetm.backuptools.common.datanode;
 
+import ch.fetm.backuptools.common.FileSystemTools;
 import ch.fetm.backuptools.common.tools.ScpClient;
 
 /**
@@ -28,11 +29,12 @@ public class WORMSftpTest extends AWORMFileSystemTest {
     public void setUp() throws Exception {
         super.setUp();
         ScpClient scpClient = new ScpClient("localhost","test","test");
-        worm = new WORMSftpFileSystem(scpClient, "/home/test/test");
+        worm = new WORMSftpFileSystem(scpClient, "/Users/test/test");
+
     }
 
     @Override
     public void tearDown() throws Exception {
-
+        FileSystemTools.eraseDirectory("/Users/test/test");
     }
 }
