@@ -1,4 +1,4 @@
-package ch.fetm.backuptools.common;
+package ch.fetm.backuptools.testingtools;
 
 import java.io.IOException;
 import java.nio.file.*;

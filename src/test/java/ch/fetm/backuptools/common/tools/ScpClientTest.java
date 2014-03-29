@@ -18,14 +18,13 @@
 
 package ch.fetm.backuptools.common.tools;
 
-import ch.fetm.backuptools.common.FileSystemTools;
+import ch.fetm.backuptools.testingtools.FileSystemTools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

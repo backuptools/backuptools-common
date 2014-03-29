@@ -18,7 +18,6 @@
 
 package ch.fetm.backuptools.common.datanode;
 
-import ch.fetm.backuptools.common.FileSystemTools;
 import ch.fetm.backuptools.common.tools.SHA1;
 import org.junit.After;
 import org.junit.Before;
