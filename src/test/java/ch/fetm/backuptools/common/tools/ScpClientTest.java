@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2014. Florian Mahon <florian@faivre-et-mahon.ch>             *
+ * Copyright (c) 2013,2014. Florian Mahon <florian@faivre-et-mahon.ch>        *
  *                                                                            *
  * This file is part of backuptools.                                          *
  *                                                                            *
@@ -18,86 +18,47 @@
 
 package ch.fetm.backuptools.common.tools;
 
+import ch.fetm.backuptools.testingtools.ConfigFiles;
 import ch.fetm.backuptools.testingtools.FileSystemTools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.*;
 
-import static org.junit.Assert.assertFalse;
+import static java.lang.System.exit;
 import static org.junit.Assert.assertTrue;
 
 public class ScpClientTest {
+    private static String TEST_DIR = "sftp";
     private ScpClient sftp;
-    private String name = "test";
-    private String host = "localhost";
-    private String pass = "test";
-
-    private String localname =  "/Users/Admin/index.txt";
-
-    private String remotename = "/Users/test/index.txt";
-
-    private String remotedir =  "/Users/test/mkdir";
+    private String remotedir = null;
 
     @Before
-    public void Setup() {
-        sftp = new ScpClient(host, name, pass);
+    public void Setup() throws Exception {
+        sftp = new ScpClient(ConfigFiles.get().getSSHHost(),
+                ConfigFiles.get().getSSHUser(),
+                ConfigFiles.get().getSSHUserPassword());
+
+        remotedir = ConfigFiles.get().getSSHTestDirectoryLocation() + TEST_DIR;
+
+        if (sftp.isExist(remotedir)) {
+            System.out.println("Remote directory exist be careful because it's removed after test!!!");
+            System.out.println(remotedir);
+            exit(-1);
+        }
     }
 
-    @Test
-    public void testAll() {
-
-        Path local = Paths.get(localname);
-        if (!Files.exists(local)) {
-            try {
-                Files.createFile(local);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        if (sftp.isExist(remotename)) {
-            sftp.rmFile(remotename);
-        }
-
-        sftp.put(localname, remotename);
-        assertTrue(sftp.isExist(remotename));
-
-        sftp.rmFile(remotename);
-        assertFalse(sftp.isExist(remotename));
-
-        sftp.put(localname, remotename);
-        assertTrue(sftp.isExist(remotename));
-
-        if (Files.exists(local)) {
-            try {
-                Files.delete(local);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        assertFalse(Files.exists(local));
-
-        sftp.get(remotename, localname);
-        assertTrue(Files.exists(local));
-    }
 
     @Test
     public void createFolderTree() throws IOException {
-        FileSystemTools.eraseDirectory(remotedir);
-
-        assertFalse(sftp.isExist(remotedir));
-        sftp.createFolderTree(remotedir);
-        assertTrue(sftp.isExist(remotedir));
         sftp.createFolderTree(remotedir + "/test1/test2");
         assertTrue(sftp.isExist(remotedir + "/test1/test2"));
     }
 
     @After
     public void tearDown() {
-
+        sftp.disconnect();
+        FileSystemTools.eraseDirectory(remotedir);
     }
 }

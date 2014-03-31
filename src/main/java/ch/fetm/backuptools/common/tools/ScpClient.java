@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2014. Florian Mahon <florian@faivre-et-mahon.ch>             *
+ * Copyright (c) 2013,2014. Florian Mahon <florian@faivre-et-mahon.ch>        *
  *                                                                            *
  * This file is part of backuptools.                                          *
  *                                                                            *
@@ -23,7 +23,6 @@ import com.jcraft.jsch.*;
 import java.io.InputStream;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 public class ScpClient {
     private Session session;
@@ -57,7 +56,7 @@ public class ScpClient {
             try {
                 session.connect();
                 sftp = (ChannelSftp) session.openChannel("sftp");
-                if (sftp != null || !sftp.isConnected()) {
+                if (sftp != null && !sftp.isConnected()) {
                     sftp.connect();
                 }
             } catch (JSchException e) {
@@ -84,7 +83,13 @@ public class ScpClient {
             isExist = false;
         }
         return isExist;
+    }
 
+    public void disconnect() {
+        if (sftp.isConnected())
+            sftp.disconnect();
+        if (session.isConnected())
+            session.disconnect();
     }
 
     public void rmFile(String name) {
@@ -97,28 +102,10 @@ public class ScpClient {
         }
     }
 
-    public void get(String src, String dst) {
-        connect();
-        try {
-            sftp.get(src, dst);
-        } catch (SftpException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void put(String filename, InputStream in) {
         connect();
         try {
             sftp.put(in, filename);
-        } catch (SftpException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void put(String localname, String dest) {
-        connect();
-        try {
-            sftp.put(localname, dest);
         } catch (SftpException e) {
             e.printStackTrace();
         }

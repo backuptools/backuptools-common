@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2014. Florian Mahon <florian@faivre-et-mahon.ch>             *
+ * Copyright (c) 2013,2014. Florian Mahon <florian@faivre-et-mahon.ch>        *
  *                                                                            *
  * This file is part of backuptools.                                          *
  *                                                                            *
@@ -18,8 +18,9 @@
 
 package ch.fetm.backuptools.common.datanode;
 
-import ch.fetm.backuptools.testingtools.FileSystemTools;
 import ch.fetm.backuptools.common.tools.ScpClient;
+import ch.fetm.backuptools.testingtools.ConfigFiles;
+import ch.fetm.backuptools.testingtools.FileSystemTools;
 
 /**
  * Created by florian on 20.03.14.
@@ -28,13 +29,16 @@ public class WORMSftpTest extends AWORMFileSystemTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        ScpClient scpClient = new ScpClient("localhost","test","test");
-        worm = new WORMSftpFileSystem(scpClient, "/Users/test/test");
+        ScpClient scpClient = new ScpClient(ConfigFiles.get().getSSHHost(),
+                ConfigFiles.get().getSSHUser(),
+                ConfigFiles.get().getSSHUserPassword());
+        worm = new WORMSftpFileSystem(scpClient,
+                ConfigFiles.get().getSSHTestDirectoryLocation());
 
     }
 
     @Override
     public void tearDown() throws Exception {
-        FileSystemTools.eraseDirectory("/Users/test/test");
+        FileSystemTools.eraseDirectory(ConfigFiles.get().getSSHTestDirectoryLocation());
     }
 }
