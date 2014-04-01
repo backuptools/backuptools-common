@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2014. Florian Mahon <florian@faivre-et-mahon.ch>             *
+ * Copyright (c) 2013,2014. Florian Mahon <florian@faivre-et-mahon.ch>        *
  *                                                                            *
  * This file is part of backuptools.                                          *
  *                                                                            *
@@ -49,19 +49,14 @@ public class WORMSftpFileSystem implements IWORMFileSystem{
     @Override
     public void writeFile(String fullname, InputStream inputStream) throws IOException {
        // Check si le repertoire exit
-        if (!scpClient.isExist(directoryLocation)){
-            StringTokenizer tokenizer = new StringTokenizer(fullNameComposer(fullname), FOLDERSEPARATOR);
-            String destination ="";
-            char[] test = new char[1];
-            fullname.getChars(0,0,test,1);
-            if ( test.toString().equals(FOLDERSEPARATOR))
-                destination = FOLDERSEPARATOR;
-
+        if (!scpClient.isExist(directoryLocation + FOLDERSEPARATOR + fullname)) {
+            StringTokenizer tokenizer = new StringTokenizer(fullname, FOLDERSEPARATOR);
+            String dest = "";
 
             for (int cpt = 0; cpt<tokenizer.countTokens(); cpt++){
-                destination = destination + FOLDERSEPARATOR + tokenizer.nextToken();
+                dest = dest + FOLDERSEPARATOR + tokenizer.nextToken();
             }
-            scpClient.createFolderTree(fullNameComposer(fullname));
+            scpClient.createFolderTree(fullNameComposer(dest));
         }
         scpClient.put(fullNameComposer(fullname), inputStream);
     }
@@ -85,8 +80,8 @@ public class WORMSftpFileSystem implements IWORMFileSystem{
     public List<String> getListFiles(String directory) throws IOException {
         List<String>list = scpClient.ls(fullNameComposer(directory));
         List<String> result = new ArrayList<>();
-        for (int cpt = 0; cpt < list.size()-1; cpt++) {
-            result.add(directory + FOLDERSEPARATOR + list.get(cpt));
+        for (int cpt = 0; cpt < list.size(); cpt++) {
+            result.add(FOLDERSEPARATOR + directory + FOLDERSEPARATOR + list.get(cpt));
         }
         return  result;
     }

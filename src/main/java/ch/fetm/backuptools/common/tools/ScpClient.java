@@ -21,6 +21,7 @@ package ch.fetm.backuptools.common.tools;
 import com.jcraft.jsch.*;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -124,9 +125,14 @@ public class ScpClient {
 
     public List<String> ls(String path) {
         connect();
-        List<String> result = null;
+        List<ChannelSftp.LsEntry> entries;
+        List<String> result = new ArrayList<>();
         try {
-            result = sftp.ls(path);
+            entries = sftp.ls(path);
+            for (ChannelSftp.LsEntry lsEntry : entries) {
+                if (!lsEntry.getFilename().equals(".") && !lsEntry.getFilename().equals(".."))
+                    result.add(lsEntry.getFilename());
+            }
         } catch (SftpException e) {
             e.printStackTrace();
         }

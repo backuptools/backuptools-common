@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2014. Florian Mahon <florian@faivre-et-mahon.ch>             *
+ * Copyright (c) 2013,2014. Florian Mahon <florian@faivre-et-mahon.ch>        *
  *                                                                            *
  * This file is part of backuptools.                                          *
  *                                                                            *
@@ -26,20 +26,19 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by florian on 20.03.14.
  */
 public abstract class AWORMFileSystemTest {
+    protected IWORMFileSystem worm;
     private String file = "/test/mydocuments";
     private StringBuffer sb = new StringBuffer();
-    protected IWORMFileSystem worm;
+
     @Before
     public void setUp() throws Exception{
         sb.append("Litle test for writing a line in wormfs");
@@ -69,17 +68,19 @@ public abstract class AWORMFileSystemTest {
 
     @Test
     public void testListFilesInDirectory(){
-        StringBuffer sb = new StringBuffer();
-        List<String> listfiles = new ArrayList<>();
-        sb.append("test");
         int nbFile = 10;
+        StringBuffer sb = new StringBuffer();
+        sb.append("test");
+
+        HashMap<String, Object> listfiles = new HashMap<>();
+
         String dir = "directory";
         for(int cpt = 0; cpt < nbFile; cpt++){
             InputStream in = new ByteArrayInputStream(sb.toString().getBytes());
             try {
-                String name = dir+WORMFileSystem.DIRECTORY_SEPARATOR+"file"+cpt;
-                listfiles.add(name);
-                worm.writeFile(name,in);
+                String name = dir + WORMFileSystem.DIRECTORY_SEPARATOR + "file" + cpt + ".txt";
+                listfiles.put("/" + name, null);
+                worm.writeFile(name, in);
                 in.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -92,6 +93,9 @@ public abstract class AWORMFileSystemTest {
             e.printStackTrace();
         }
         assertEquals(list.size(), nbFile);
+        for (String s : list) {
+            assertTrue(listfiles.containsKey(s));
+        }
     }
 
     @Test

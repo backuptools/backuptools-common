@@ -24,9 +24,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 import static java.lang.System.exit;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ScpClientTest {
@@ -54,6 +59,27 @@ public class ScpClientTest {
     public void createFolderTree() throws IOException {
         sftp.createFolderTree(remotedir + "/test1/test2");
         assertTrue(sftp.isExist(remotedir + "/test1/test2"));
+    }
+
+    @Test
+    public void listFiles() {
+        sftp.createFolderTree(remotedir + "/list/");
+        StringBuffer sb = new StringBuffer("petit test");
+        sftp.put(remotedir + "/list/file1.txt", new ByteArrayInputStream(sb.toString().getBytes()));
+        sftp.put(remotedir + "/list/file2.txt", new ByteArrayInputStream(sb.toString().getBytes()));
+        sftp.put(remotedir + "/list/file3.txt", new ByteArrayInputStream(sb.toString().getBytes()));
+
+        HashMap<String, Objects> hashMap = new HashMap<>();
+
+        List<String> list = sftp.ls(remotedir + "/list/");
+        for (String s : list) {
+            hashMap.put(s, null);
+        }
+
+        assertEquals(list.size(), 3);
+        assertTrue(hashMap.containsKey("file1.txt"));
+        assertTrue(hashMap.containsKey("file2.txt"));
+        assertTrue(hashMap.containsKey("file3.txt"));
     }
 
     @After
