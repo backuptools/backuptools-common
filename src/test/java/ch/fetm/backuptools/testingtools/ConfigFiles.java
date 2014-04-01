@@ -51,6 +51,9 @@ public class ConfigFiles {
         Path pConfigFile = Paths.get(configuration);
         if (pConfigFile.toFile().exists()) {
             result = new Configuration(pConfigFile);
+        } else {
+            System.out.println("Config file not present! Please create it and restart test");
+            System.exit(-1);
         }
         return result;
     }
