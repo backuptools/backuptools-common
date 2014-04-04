@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2014. Florian Mahon <florian@faivre-et-mahon.ch>             *
+ * Copyright (c) 2013,2014. Florian Mahon <florian@faivre-et-mahon.ch>        *
  *                                                                            *
  * This file is part of backuptools.                                          *
  *                                                                            *
@@ -16,30 +16,42 @@
  * If not, see <http://www.gnu.org/licenses/>.                                *
  ******************************************************************************/
 
-package ch.fetm.backuptools.common.datanode;
+package ch.fetm.backuptools.testingtools;
 
-import ch.fetm.backuptools.testingtools.FileSystemTools;
-import org.junit.After;
-import org.junit.Before;
-
-import java.nio.file.Files;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Properties;
 
+public class Configuration {
 
-public class WORMFileSystemTest extends AWORMFileSystemTest {
-    Path path;
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        path = Files.createTempDirectory("worm");
-        super.setUp();
-        worm = new WORMFileSystem(path);
+    private final String SSH_USER = "ssh.user";
+    private final String SSH_HOST = "ssh.host";
+    private final String SSH_PASS = "ssh.password";
+
+    private Properties properties;
+
+    public Configuration(Path configFile) throws IOException {
+        InputStream inputStream = new FileInputStream(configFile.toFile());
+        this.properties = new Properties();
+        this.properties.load(inputStream);
     }
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        FileSystemTools.eraseDirectory(path.toString());
+
+    public String getSSHUser() {
+        return properties.getProperty(SSH_USER);
     }
 
+    public String getSSHUserPassword() {
+        return properties.getProperty(SSH_PASS);
+    }
+
+    public String getSSHHost() {
+        return properties.getProperty(SSH_HOST);
+    }
+
+    public String getSSHTestDirectoryLocation() {
+        return properties.getProperty("ssh.test.directory");
+    }
 }

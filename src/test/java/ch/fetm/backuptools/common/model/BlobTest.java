@@ -16,30 +16,17 @@
  * If not, see <http://www.gnu.org/licenses/>.                                *
  ******************************************************************************/
 
-package ch.fetm.backuptools.common.datanode;
+package ch.fetm.backuptools.common.model;
 
-import ch.fetm.backuptools.testingtools.FileSystemTools;
-import org.junit.After;
-import org.junit.Before;
+import junit.framework.TestCase;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-
-public class WORMFileSystemTest extends AWORMFileSystemTest {
-    Path path;
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        path = Files.createTempDirectory("worm");
-        super.setUp();
-        worm = new WORMFileSystem(path);
+/**
+ * Created by florian on 19.03.14.
+ */
+public class BlobTest extends TestCase {
+    public void testGetName() throws Exception {
+        String name = "test";
+        Blob blob = new Blob(name);
+        assertEquals(name,blob.getName());
     }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        FileSystemTools.eraseDirectory(path.toString());
-    }
-
 }

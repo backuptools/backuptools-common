@@ -34,11 +34,11 @@ import java.util.List;
 
 public class NodeDirectoryDatabase implements INodeDatabase {
 
-	private static String BLOBS_DIRECTORY = "blobs";
-	private static String TREES_DIRECTORY = "trees";
+    private static String BLOBS_DIRECTORY = "blobs";
+    private static String TREES_DIRECTORY = "trees";
     private static String BACKUP_DIRECTORY = "backups";
-	private static int LAST_DIRECTORY_SUBSTRING_BEGIN_INDEX = 0;
-	private static int LAST_DIRECTORY_SUBSTRING_END_INDEX   = 2;
+    private static int LAST_DIRECTORY_SUBSTRING_BEGIN_INDEX = 0;
+    private static int LAST_DIRECTORY_SUBSTRING_END_INDEX = 2;
     IWORMFileSystem fileSystem;
 
     public NodeDirectoryDatabase(WORMFileSystem fs) {
@@ -80,53 +80,53 @@ public class NodeDirectoryDatabase implements INodeDatabase {
     @Override
     public void sendTree(Tree tree) {
         StringBuffer stringBuffer = tree.buildData();
-        sendStringBuffer(TREES_DIRECTORY,stringBuffer);
+        sendStringBuffer(TREES_DIRECTORY, stringBuffer);
     }
 
     @Override
-	public Blob sendFile(Path file){
-		Blob blob = null;
+    public Blob sendFile(Path file) {
+        Blob blob = null;
         String blobName = SHA1.SHA1SignFile(file);
         String blobFullPath;
         try {
             InputStream inputStream = new FileInputStream(file.toFile());
-            blobFullPath = createFullPath(BLOBS_DIRECTORY, blobName)+FileSystems.getDefault().getSeparator()+blobName;
-			if(! fileSystem.fileExist(blobFullPath)){
+            blobFullPath = createFullPath(BLOBS_DIRECTORY, blobName) + FileSystems.getDefault().getSeparator() + blobName;
+            if (!fileSystem.fileExist(blobFullPath)) {
                 fileSystem.writeFile(blobFullPath, inputStream);
-				inputStream.close();
-			}
-			blob = new Blob(blobName);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		return blob;
-	}
+                inputStream.close();
+            }
+            blob = new Blob(blobName);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return blob;
+    }
 
-	@Override
-	public InputStream createInputStreamFromNodeName(String signature){
-		InputStream inputStream;
-		String fullPathBlob;
-		String fullPathTree;
+    @Override
+    public InputStream createInputStreamFromNodeName(String signature) {
+        InputStream inputStream;
+        String fullPathBlob;
+        String fullPathTree;
 
-		try {
-			fullPathBlob = createFullPath(BLOBS_DIRECTORY, signature)+'/'+signature;
-			fullPathTree = createFullPath(TREES_DIRECTORY, signature)+'/'+signature;
+        try {
+            fullPathBlob = createFullPath(BLOBS_DIRECTORY, signature) + '/' + signature;
+            fullPathTree = createFullPath(TREES_DIRECTORY, signature) + '/' + signature;
 
-			if(fileSystem.fileExist(fullPathBlob)){
-				inputStream = fileSystem.readFile(fullPathBlob);
-			} else if(fileSystem.fileExist(fullPathTree)){
-				inputStream = fileSystem.readFile(fullPathTree);
-			} else {
-				return null;
-			}
+            if (fileSystem.fileExist(fullPathBlob)) {
+                inputStream = fileSystem.readFile(fullPathBlob);
+            } else if (fileSystem.fileExist(fullPathTree)) {
+                inputStream = fileSystem.readFile(fullPathTree);
+            } else {
+                return null;
+            }
 
-			return inputStream;
+            return inputStream;
 
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		return null;
-	}
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     public void sendBackup(Backup backup) {
@@ -138,9 +138,9 @@ public class NodeDirectoryDatabase implements INodeDatabase {
     public List<Backup> getBackups() throws IOException {
         List<Backup> backups = new ArrayList<>();
         List<String> listDirectories = fileSystem.getListFiles("/backups");
-        for(String directory : listDirectories){
+        for (String directory : listDirectories) {
             List<String> files = fileSystem.getListFiles(directory);
-            for(String file : files){
+            for (String file : files) {
                 InputStream in = fileSystem.readFile(file);
                 backups.add(new Backup(in));
                 in.close();

@@ -18,7 +18,7 @@
 
 package ch.fetm.backuptools.common.datanode;
 
-import ch.fetm.backuptools.common.TestUtilities;
+import ch.fetm.backuptools.testingtools.TestUtilities;
 import ch.fetm.backuptools.common.model.Backup;
 import ch.fetm.backuptools.common.model.Tree;
 import ch.fetm.backuptools.common.model.TreeInfo;
