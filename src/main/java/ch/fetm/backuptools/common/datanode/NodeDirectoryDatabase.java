@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2014. Florian Mahon <florian@faivre-et-mahon.ch>             *
+ * Copyright (c) 2013,2014. Florian Mahon <florian@faivre-et-mahon.ch>        *
  *                                                                            *
  * This file is part of backuptools.                                          *
  *                                                                            *
@@ -41,7 +41,7 @@ public class NodeDirectoryDatabase implements INodeDatabase {
     private static int LAST_DIRECTORY_SUBSTRING_END_INDEX = 2;
     IWORMFileSystem fileSystem;
 
-    public NodeDirectoryDatabase(WORMFileSystem fs) {
+    public NodeDirectoryDatabase(IWORMFileSystem fs) {
         fileSystem = fs;
     }
 
