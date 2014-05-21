@@ -23,8 +23,12 @@ import org.fetm.backuptools.common.tools.ScpClient;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class BackupAgentFactory {
@@ -49,6 +53,15 @@ public class BackupAgentFactory {
 
         INodeDatabase db = new NodeDirectoryDatabase(fs);
         return new BackupAgent(Paths.get(src_directory), db);
+    }
+
+    public static List<IBackupAgent> getBackupAgents(Path directory) throws IOException {
+        DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.properties");
+        List<IBackupAgent> agents = new ArrayList<>();
+        for(Path file : files){
+            agents.add(BackupAgentFactory.getBackupAgent(file.toString()));
+        }
+        return agents;
     }
 
     public static IBackupAgent getBackupAgent(BackupAgentConfig config) {
