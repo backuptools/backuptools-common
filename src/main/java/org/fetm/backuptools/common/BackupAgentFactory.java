@@ -32,41 +32,40 @@ import java.util.List;
 import java.util.Properties;
 
 public class BackupAgentFactory {
-    public static BackupAgent getBackupAgent(String file) throws IOException {
-        Path path_file = Paths.get(file);
+    public static BackupAgent buildBackupAgent(String file) throws IOException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(path_file.toFile()));
-        String src_directory = properties.getProperty("src");
-        String vault_location = properties.getProperty("vault.directory");
-        String vault_type = properties.getProperty("vault.type");
-        IWORMFileSystem fs = null;
-        if (vault_type.equals("sftp")) {
-            String ssh_user = properties.getProperty("vault.ssh.user");
-            String ssh_host = properties.getProperty("vault.ssh.host");
-            String ssh_pass = properties.getProperty("vault.ssh.password");
+        properties.load(new FileInputStream(file));
+        VaultConfigPersistance config_persistance = new VaultConfigPersistance(properties);
 
-            ScpClient scp = new ScpClient(ssh_host, ssh_user, ssh_pass);
-            fs = new WORMSftpFileSystem(scp, vault_location);
-        } else if (vault_type.equals(("dir"))) {
-            fs = new WORMFileSystem(vault_location);
-        }
+        VaultConfiguration configuration = config_persistance.read();
 
-        INodeDatabase db = new NodeDirectoryDatabase(fs);
-        return new BackupAgent(Paths.get(src_directory), db);
+        return buildBackupAgent(configuration);
     }
 
-    public static List<IBackupAgent> getBackupAgents(Path directory) throws IOException {
+    public static BackupAgent buildBackupAgent(VaultConfiguration configuration) {
+        IWORMFileSystem fs = null;
+        if (configuration.getVaultType().equals(VaultConfiguration.TYPE_SFTP)) {
+            ScpClient scp = new ScpClient(configuration.getHost(),
+                    configuration.getUser(),
+                    configuration.getPass());
+
+            fs = new WORMSftpFileSystem(scp, configuration.getLocation());
+        } else if (configuration.getVaultType().equals(VaultConfiguration.TYPE_DIR)) {
+            fs = new WORMFileSystem(configuration.getLocation());
+        }
+
+
+        INodeDatabase db = new NodeDirectoryDatabase(fs);
+        return new BackupAgent(Paths.get(configuration.getDirectory()), db);
+    }
+
+    public static List<IBackupAgent> buildBackupAgents(Path directory) throws IOException {
         DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.properties");
         List<IBackupAgent> agents = new ArrayList<>();
         for(Path file : files){
-            agents.add(BackupAgentFactory.getBackupAgent(file.toString()));
+            agents.add(BackupAgentFactory.buildBackupAgent(file.toString()));
         }
         return agents;
     }
 
-    public static IBackupAgent getBackupAgent(BackupAgentConfig config) {
-        IWORMFileSystem worm = new WORMFileSystem(config.getVault_path());
-        INodeDatabase nodeDatabase = new NodeDirectoryDatabase(worm);
-        return new BackupAgent(config.getSource_path(), nodeDatabase);
-    }
 }
